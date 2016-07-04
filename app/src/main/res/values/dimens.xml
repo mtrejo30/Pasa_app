@@ -12,6 +12,7 @@
     <!-- Listas -->
     <dimen name="altura_item_lista_simple">48dp</dimen>
     <dimen name="tamano_texto_item_lista">16sp</dimen>
+    <dimen name="altura_item_lista_simple2">70dp</dimen>
     <dimen name="padding_horizontal_item_lista">16dp</dimen>
     <dimen name="padding_superior_item_lista">8dp</dimen>
 

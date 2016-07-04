@@ -2,21 +2,30 @@ package pasa.inventarios.com;
 
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import pasa.inventarios.com.Contrato.Inventarios;
 
 /**
  * Created by Abraham on 27/06/2016.
  */
 public class AdaptadorInventarios
-                    extends RecyclerView.Adapter<AdaptadorInventarios.ViewHolder> {
+        extends RecyclerView.Adapter<AdaptadorInventarios.ViewHolder> {
     private Cursor items;
+    int i = 0;
     // Instancia de escucha
     private OnItemClickListener escucha;
+    Map<String,Integer> map = new HashMap<String,Integer>();
+    ArrayList<String> list = new ArrayList<String>();
     /**
      * Interfaz para escuchar clicks del recycler
      */
@@ -62,14 +71,26 @@ public class AdaptadorInventarios
     public void onBindViewHolder(ViewHolder holder, int position) {
         items.moveToPosition(position);
         String equipoFolio;
-        String tipoEquipoAlmacen;
-        String equipoAlmacen;
+        String equipoRFID;
+        String tipoEquipoId;
+        String equipoAlmacenId;
+        String equipoEstatus;
+        String equipoPropio;
         String fkBranch;
+        String tipoAlmacenStr;
+        String tipoEquipoStr;
         equipoFolio = UConsultas.obtenerString(items, Inventarios.EQUIPO_FOLIO);
-        tipoEquipoAlmacen = UConsultas.obtenerString(items, Inventarios.FK_TIPO_EQUIPO_ID);
-        equipoAlmacen = UConsultas.obtenerString(items, Inventarios.FK_EQUIPO_ALMACEN_ID);
+        equipoRFID = UConsultas.obtenerString(items, Inventarios.EQUIPO_RFID);
+        tipoEquipoId = UConsultas.obtenerString(items, Inventarios.FK_TIPO_EQUIPO_ID);
+        equipoAlmacenId = UConsultas.obtenerString(items, Inventarios.FK_EQUIPO_ALMACEN_ID);
+        equipoEstatus = UConsultas.obtenerString(items, Inventarios.EQUIPO_ESTATUS_ID);
+        equipoPropio = UConsultas.obtenerString(items, Inventarios.EQUIPO_PROPIO);
         fkBranch = UConsultas.obtenerString(items, Inventarios.FK_BRANCH_ID);
-        holder.nombre.setText(String.format("%s - %s - %s - %s", equipoFolio, tipoEquipoAlmacen, equipoAlmacen, fkBranch));
+        tipoAlmacenStr = UConsultas.obtenerString(items, Inventarios.EQUIPO_ALMACEN_STR);
+        tipoEquipoStr = UConsultas.obtenerString(items, Inventarios.TIPO_EQUIPO_STR);
+        holder.nombre.setText(String.format("%s - %s - %s - %s - %s - %s - %s - %s - %s",
+                equipoFolio, equipoRFID, tipoEquipoId, equipoAlmacenId,
+                equipoEstatus, equipoPropio, fkBranch, tipoAlmacenStr, tipoEquipoStr));
     }
     @Override
     public int getItemCount() {

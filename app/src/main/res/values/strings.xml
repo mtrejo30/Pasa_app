@@ -89,6 +89,7 @@
 
     <!-- Titulos actividades -->
     <string name="titulo_actividad_actividad_contactos">Contactos</string>
+    <string name="titulo_actividad_actividad_listar">Sincronización</string>
     <string name="titulo_actividad_insertar_contacto">Añadir nuevo contacto</string>
     <string name="titulo_actividad_editar_contacto">Editar contacto</string>
 

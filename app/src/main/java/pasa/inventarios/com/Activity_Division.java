@@ -22,6 +22,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import butterknife.OnItemSelected;
+
 public class Activity_Division extends AppCompatActivity {
 
     // uicontrols
@@ -82,16 +84,26 @@ public class Activity_Division extends AppCompatActivity {
         spn_Division.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // On selecting a spinner item
+
+                Cursor colCur=(Cursor)spn_Division.getSelectedItem();
+                String str_Div = colCur.getString(colCur.getColumnIndex(Contrato.cls_Columnas_Login_User.STR_NAME));
+                Log.e("División", "Item==================: "+ str_Div);
+
+                String col=colCur.getString(0);
+                String col0=colCur.getString(1);
+                String col1=colCur.getString(2);
+                String col2=colCur.getString(3);
+                String col3=colCur.getString(4);
+                String col4=colCur.getString(5);
                 str_Division = parent.getItemAtPosition(position).toString();
                 if(position == 0){
                     // Showing selected spinner item
                     Toast.makeText(getApplicationContext(),
-                            "Selecciona una opción: " + id, Toast.LENGTH_SHORT).show();
+                            "Selecciona una opción", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Toast.makeText(getApplicationContext(),
-                            "División: " + id, Toast.LENGTH_SHORT).show();
+                            "División: " +  str_Div, Toast.LENGTH_SHORT).show();
                     Intent i = new Intent(Activity_Division.this,Activity_Home.class);
                     startActivity(i);
                 }
@@ -123,7 +135,7 @@ public class Activity_Division extends AppCompatActivity {
                 String respStr = EntityUtils.toString(resp.getEntity());
                 JSONArray respJSON = new JSONArray(respStr);
                 clientes = new String[respJSON.length()];
-                for(int i=0; i<respJSON.length(); i++)	        	{
+                for(int i=0; i<respJSON.length(); i++)               {
                     JSONObject obj = respJSON.getJSONObject(i);
                     int idCli = obj.getInt("tipoEquipoId");
                     String nombCli = obj.getString("tipoEquipoClave");

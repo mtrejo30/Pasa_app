@@ -14,6 +14,7 @@ public class Contrato {
         String ELIMINADO = "eliminado";
         String INSERTADO = "insertado";
     }
+
     interface Columnas_Login_User {
         //String ID_INT_BRANCHID = "id_int_branch";// Pk
         String ID_INT_BRANCHID = "_id";// Pk
@@ -49,6 +50,8 @@ public class Contrato {
         String EQUIPO_ESTATUS_ID = "equipo_Estatus_Id";
         String EQUIPO_PROPIO = "equipo_Propio";
         String FK_BRANCH_ID = "branch_Id";
+        String EQUIPO_ALMACEN_STR = "equipo_Almacen_Str";
+        String TIPO_EQUIPO_STR = "tipoEquipo";
     }
     // Autoridad del Content Provider
     public final static String AUTORIDAD = "pasa.inventarios.com";

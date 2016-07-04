@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -14,27 +13,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
+import android.widget.TextView;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
-
-import java.util.Random;
-
+import java.util.ArrayList;
 import pasa.inventarios.com.Contrato.Inventarios;
 
 public class Actividad_Lista_Inventarios extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,
-                                        AdaptadorInventarios.OnItemClickListener{
+        AdaptadorInventarios.OnItemClickListener{
 
     private static final String TAG = Actividad_Lista_Inventarios.class.getSimpleName();
 
@@ -49,6 +44,8 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
     Button btn_Cat_Almac1;
     Button btn_Tip_Equip1;
 
+    ArrayList lista;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +56,9 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
         // Agregar toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setTitle(R.string.titulo_actividad_actividad_contactos);
+        setTitle(R.string.titulo_actividad_actividad_listar);
 
-                prepararLista();
+        prepararLista();
 /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -77,9 +74,24 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
         btn_Inve1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 TareaWSInsertar tare = new TareaWSInsertar();
+                //tare.setReciclador(reciclador);
                 tare.execute();
 
+                lista  = new ArrayList<String[]>();
+                for (int i = 0; i < reciclador.getChildCount(); i++){
+                    View view = reciclador.getChildAt(i);
+                    String str = "";
+                    TextView editText1 = (TextView) ((TextView) view);
+                    str = editText1.getText().toString();
+                    String[] splitDat = str.split("-");
+                    Log.d("Entg000000000e", " === " + splitDat[0] + "----" + splitDat[1]);
+                    lista.add(splitDat);
+                    //}
+                    Log.d("======>>>>>>", "String:::" + "" + " ======>>>>> View:::" + lista.size());
+
+                }
             }
         });
 
@@ -156,45 +168,62 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
     private class TareaWSInsertar extends AsyncTask<String,Integer,Boolean> {
         public int contador = 0;
 
+        /*private RecyclerView reciclador;
+
+        public RecyclerView getReciclador() {
+            return reciclador;
+        }
+
+        public void setReciclador(RecyclerView reciclador) {
+            this.reciclador = reciclador;
+        }*/
+
         protected Boolean doInBackground(String... params) {
             String message;
 
-            HttpClient httpClient = new DefaultHttpClient();
+            DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/altaEquipos");
 
             post.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials("adminLogistica", "Pasa123!"), "UTF-8", false));
-            post.setHeader("content-type", "application/json");
+            //post.setHeader("content-type", "application/json");
             try {
-                for (int i =0; i < adaptador.getItemCount(); i++) {
-                    Random rand = new Random();
-                    int n = rand.nextInt(999999);
-                    int nn = rand.nextInt(999999);
-                    int nnn = rand.nextInt(999999);
-                    String hh = ""+n;
-                    JSONObject object = new JSONObject();
-                    Log.d("", "========>>>>>>>>>>>>>>>>>>>>" + hh);
-                    object.put("equipoFolio", adaptador.getItemId(i));
+                int tamaño = lista.size();
+                Log.d("ggggg","" + tamaño);
+
+
+
+
+                JSONObject object = new JSONObject();
+                for (int i = 0; i < tamaño; i++){
+                    String[] splitDat = (String[]) lista.get(i);
+                    Log.d("Subir informacion", " === " + splitDat[0] + "----" + splitDat[1]);
+                    object.put("equipoFolio", splitDat[0].trim());
                     object.put("equipoRFID", "");
-                    object.put("tipoEquipoId", nn);
-                    object.put("equipoAlmacenId", nnn);
-                    object.put("equipoEstatusId", 1);
-                    object.put("equipoPropio", 0);
-                    object.put("branchId", 52);
+                    object.put("tipoEquipoId", splitDat[2].trim());
+                    object.put("equipoAlmacenId", splitDat[3].trim());
+                    object.put("equipoEstatusId", splitDat[4].trim());
+                    object.put("equipoPropio", splitDat[5].trim());
+                    object.put("branchId", splitDat[6].trim());
                     message = object.toString();
                     post.setEntity(new StringEntity(message, "UTF8"));
                     post.setHeader("Content-type", "application/json");
                     HttpResponse resp = httpClient.execute(post);
+                    //ResponseHandler<String> handler = new BasicResponseHandler();
+                    //String Body = httpClient.execute(post, handler);
                     if (resp != null) {
                         if (resp.getStatusLine().getStatusCode() == 204)
                             result = true;
                     }
-                    Log.d("Status line", "" + message);
+                    Log.d("Status line", "" + resp);
                     Log.d("Status line", "" + resp.getStatusLine().getStatusCode());
-                    Log.d("Error: ", "" + resp.getStatusLine().toString());
-                    Log.d("Error: ", "" + resp.getEntity().getContent());
-                    Log.d("Ins", "==============" + i);
+                    Log.d(": ", "" + resp.getStatusLine().toString());
+                    Log.d(": ", "" + resp.getStatusLine().getStatusCode());
+                    Log.d(": ", "" + resp.getEntity().getContent());
+                    Log.d("Ins", "==============");
 
                 }
+                //for (int i =0; i < adaptador.getItemCount(); i++) {
+                //}
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error=============>>>>!", ex);
                 Log.d("TareaWSInsertar: ", "catch(Exception ex)");
@@ -205,7 +234,7 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
 
         protected void onPostExecute(Boolean result) {
             if (result) {
-                Log.d("Éxito: ", "TareaWSInsertar - protected void onPostExecute()");
+                Log.d("Éxito: ", "==================== Se insertó");
             }
         }
     }

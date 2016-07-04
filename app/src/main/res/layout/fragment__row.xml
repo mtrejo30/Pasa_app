@@ -14,8 +14,8 @@
         android:id="@+id/editext_BarCode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/result_minor_text"
         android:textColor="@color/contents_text"
-        android:paddingBottom="15dp"
         android:layout_alignParentLeft="true" />
     <!--android:layout_toLeftOf="@id/remove"-->
 </RelativeLayout>

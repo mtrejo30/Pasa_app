@@ -47,11 +47,9 @@ public class Activity_Login extends AppCompatActivity
     private String[][] tipos_res;
     boolean resul = true;
     public static final String URI_CONTACTO = "extra.uriContacto";
-
     DbDataSource dataSource;
     private Uri uriContacto;
     HelperInventarios baseDatos;
-
     private static Activity_Login instancia = new Activity_Login();
 
     public Activity_Login obtenerInstancia(Context contexto) {
@@ -143,7 +141,6 @@ public class Activity_Login extends AppCompatActivity
                     String idBranch = obj.getString("branchId");
                     String strName = obj.getString("name");
                     String strValida = obj.getString("valida");
-                    //clientes[i] = "" + idCli + "-" + nombCli + "-" + telefCli;
                     clientes_res[i][0] = idBranch;
                     clientes_res[i][1] = strName;
                     clientes_res[i][2] = strValida;
@@ -155,7 +152,9 @@ public class Activity_Login extends AppCompatActivity
             }
             catch(Exception ex)
             {
-                Log.e("ServicioRest","Error!", ex);
+                Log.e("Error =====>>>>> ","Api: loginUser", ex);
+                Toast.makeText(getApplicationContext(),
+                        "Ocurrió un error al tratar de conectarse al servidor", Toast.LENGTH_SHORT).show();
                 resul = false;
             }
             return resul;
@@ -177,7 +176,6 @@ public class Activity_Login extends AppCompatActivity
                 valores.put(cls_Columnas_Login_User.INT_VALIDA, 0);
                 db.insertOrThrow(HelperInventarios.Tablas.TBL_LOGIN_USER, null, valores);
             }
-
             Log.d("", " ===>> " + (clientes_res[i][0].toString()));
             Log.d("", " ===>> " + (clientes_res[i][1].toString()));
             Log.d("", " ===>> " + (clientes_res[i][2].toString()));
@@ -191,16 +189,12 @@ public class Activity_Login extends AppCompatActivity
             valores.put(cls_Columnas_Login_User.STR_NAME, (clientes_res[i][1].toString()));
             valores.put(cls_Columnas_Login_User.INT_VALIDA, (Integer.parseInt(clientes_res[i][2])));
             db.insertOrThrow(HelperInventarios.Tablas.TBL_LOGIN_USER, null, valores);
-
         }
-
         protected void onPostExecute(Boolean result) {
             if (result)            {
                 if (Integer.parseInt(clientes_res[0][2].toString()) == 1){
-
                     TareaWSListarCatalogosAlmacenes tarea2 = new TareaWSListarCatalogosAlmacenes();
                     tarea2.execute();
-
                 }
                 else {
                     Toast.makeText(getApplicationContext(),
@@ -210,7 +204,7 @@ public class Activity_Login extends AppCompatActivity
             }
             else {
                 Toast.makeText(getApplicationContext(),
-                        "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                        "Datos incorrectos", Toast.LENGTH_SHORT).show();
                 txt_User.requestFocus();
             }
         }

@@ -10,10 +10,7 @@
         <item name="android:spinnerItemStyle">@style/SpinnerItemTheme</item>
     </style>
 
-    <style name="ResultButton">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
+
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
