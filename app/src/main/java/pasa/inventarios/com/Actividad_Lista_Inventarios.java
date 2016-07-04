@@ -6,6 +6,7 @@ import android.content.Entity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
@@ -22,7 +23,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpPost;
@@ -37,20 +37,15 @@ import pasa.inventarios.com.Contrato.Inventarios;
 public class Actividad_Lista_Inventarios extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,
         AdaptadorInventarios.OnItemClickListener{
-
     private static final String TAG = Actividad_Lista_Inventarios.class.getSimpleName();
-
     // Referencias UI
     private RecyclerView reciclador;
     private LinearLayoutManager layoutManager;
     private AdaptadorInventarios adaptador;
     HelperInventarios baseDatos;
     boolean result = false;
-
     Button btn_Inve1;
-
     ArrayList lista;
-
     private static Activity_Login instancia = new Activity_Login();
     public Activity_Login obtenerInstancia(Context contexto) {
         if (baseDatos == null) {
@@ -59,31 +54,26 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
         return instancia;
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.actividad__lista__inventarios);
-
         obtenerInstancia(getApplicationContext());
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(R.string.titulo_actividad_actividad_listar);
-
         prepararLista();
-
         btn_Inve1 = (Button) findViewById(R.id.btn_Inve);
+        //preparaButtons();
         btn_Inve1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 TareaWSInsertar tare = new TareaWSInsertar();
                 //tare.setReciclador(reciclador);
                 tare.execute();
-
-                lista  = new ArrayList<String[]>();
-                for (int i = 0; i < reciclador.getChildCount(); i++){
+                lista = new ArrayList<String[]>();
+                for (int i = 0; i < reciclador.getChildCount(); i++) {
                     View view = reciclador.getChildAt(i);
                     String str = "";
                     TextView editText1 = (TextView) ((TextView) view);
@@ -91,26 +81,43 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
                     String[] splitDat = str.split("-");
                     Log.d("Entg000000000e", " === " + splitDat[0] + "----" + splitDat[1]);
                     lista.add(splitDat);
-
                     Log.d("======>>>>>>", "String:::" + "" + " ======>>>>> View:::" + lista.size());
-
                 }
             }
         });
 
+        if (reciclador.getChildCount() > 0) {
+            Log.e("PreparaBotones", "=========" + reciclador.getChildCount());
+            btn_Inve1.setBackgroundColor(Color.parseColor("#60000000"));
+            btn_Inve1.setEnabled(false);
+        }else {
+            btn_Inve1.setBackgroundColor(Color.parseColor("#017A42"));
+            btn_Inve1.setEnabled(true);
+        }
+
         getSupportLoaderManager().restartLoader(1, null, this);
-
         UPreferencias.guardarClaveApi(this, "60d5b4e60cb6a70898f0cd17174e9edd");
-
     }
 
     private void prepararLista() {
         reciclador = (RecyclerView) findViewById(R.id.reciclador);
         layoutManager = new LinearLayoutManager(this);
         adaptador = new AdaptadorInventarios(this);
-
         reciclador.setLayoutManager(layoutManager);
         reciclador.setAdapter(adaptador);
+        Log.e("PreparaLista", "=========" + reciclador.getChildCount());
+
+        //preparaButtons();
+    }
+    private void preparaButtons(){
+        if (reciclador.getChildCount() > 0) {
+            Log.e("PreparaBotones", "=========" + reciclador.getChildCount());
+            btn_Inve1.setBackgroundColor(Color.parseColor("#60000000"));
+            btn_Inve1.setEnabled(false);
+        }else {
+            btn_Inve1.setBackgroundColor(Color.parseColor("#017A42"));
+            btn_Inve1.setEnabled(true);
+        }
     }
 
     @Override
@@ -124,20 +131,16 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         adaptador.swapCursor(data);
-
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adaptador.swapCursor(null);
-
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -155,13 +158,10 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
 
     private class TareaWSInsertar extends AsyncTask<String,Integer,Boolean> {
         public int contador = 0;
-
         protected Boolean doInBackground(String... params) {
             String message;
-
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/altaEquipos");
-
             post.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials("adminLogistica", "Pasa123!"), "UTF-8", false));
             //post.setHeader("content-type", "application/json");
             try {
@@ -189,10 +189,8 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
                     }
                     String[] args = new String[]{splitDat[0].trim()};
                     db.execSQL("DELETE FROM inventario WHERE equipo_Folio=?", args);
-
                     String respuesta =  EntityUtils.toString(resp.getEntity());
                     showToast(respuesta);
-
                     result = true;
                 }
 
@@ -218,6 +216,9 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
 
         protected void onPostExecute(Boolean result) {
             if (result) {
+                Log.e("onPostExecute", "=========" + reciclador.getChildCount());
+                btn_Inve1.setBackgroundColor(Color.parseColor("#60000000"));
+                btn_Inve1.setEnabled(false);
                 prepararLista();
             }
         }
