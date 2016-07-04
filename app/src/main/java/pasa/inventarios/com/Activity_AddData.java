@@ -44,6 +44,7 @@ import pasa.inventarios.com.client.android.CaptureActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Activity_AddData extends AppCompatActivity
         implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
@@ -55,9 +56,10 @@ public class Activity_AddData extends AppCompatActivity
     Button btn_Add;
     int id_Tipo_Equipo;
     int id_Equipo_Almacen;
-    String str_Tipo_Equipo;
-    String str_Equipo_Almacen;
+    String str_Tipo_Equipo = "";
+    String str_Equipo_Almacen = "";
     int id_Branch;
+    int contador = 0;
     TextView textOut;
     HelperInventarios baseDatos;
     final int[] cont = {0};
@@ -71,8 +73,6 @@ public class Activity_AddData extends AppCompatActivity
 
     DbDataSource dataSource;
     private static Activity_AddData instancia = new Activity_AddData();
-
-
 
     public static final String URI_CONTACTO = "extra.uriContacto";
 
@@ -106,7 +106,11 @@ public class Activity_AddData extends AppCompatActivity
                 View editText = (View) ((RelativeLayout) view).getChildAt(0);
                 EditText editText1 = (EditText) editText;
                 editText1.setText(_Codigo);
-                Log.d("Entg000000000e", " === " + editText1);
+                if(_Codigo == "")
+                {
+                    contador = contador + 1;
+                }
+                Log.e("", " =======>>>>>>> " + editText1 + " =======>>>>>>" + contador);
             }
 
         }
@@ -161,8 +165,8 @@ public class Activity_AddData extends AppCompatActivity
                 str_Tipo_Equipo = str_Tip_Equi;
                 Log.e("División", "Item==================: "+ str_Tip_Equi);
                 id_Tipo_Equipo = (int) id;
-                Toast.makeText(getApplicationContext(),
-                        "Id-TipoEquipo: ===>>>" + id_Tipo_Equipo, Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(getApplicationContext(),
+                        "Id-TipoEquipo: ===>>>" + id_Tipo_Equipo, Toast.LENGTH_SHORT).show();*/
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent)
@@ -192,9 +196,9 @@ public class Activity_AddData extends AppCompatActivity
                 id_Branch = Integer.parseInt(str_Bran);
                 Log.e("División", "Item==================: "+ str_Alm + " --------- " + id_Branch);
                 id_Equipo_Almacen = (int) id;
-                Toast.makeText(getApplicationContext(),
+                /*Toast.makeText(getApplicationContext(),
                         "Id-Almacen: ===>>>" + id_Equipo_Almacen + " --- ",
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_SHORT).show();*/
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -226,22 +230,52 @@ public class Activity_AddData extends AppCompatActivity
 
                 } else {
                     Toast.makeText(v.getContext(),
-                            "Introduce un Número", Toast.LENGTH_SHORT).show();
+                            "No deje el campo vacío", Toast.LENGTH_SHORT).show();
                     txt_Cantidad.requestFocus();
                 }
             }
         });
+
         btn_Save = (Button) findViewById(R.id.btn_Save);
         btn_Save.setEnabled(false);
         btn_Save.setBackgroundColor(Color.parseColor("#60000000"));
         btn_Save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                insertar(finalContainer);
-                btn_Save.setEnabled(false);
-                btn_Save.setBackgroundColor(Color.parseColor("#60000000"));
-                finalContainer.removeAllViews();
-                cont[0] = 0;
+                if (spn_TipoEquipo.getSelectedItemPosition() != 0) {
+                    if (spn_Almacen.getSelectedItemPosition() != 0) {
+                        String str = finalContainer.getChildAt(0).toString();
+                        boolean ver = true;
+                        for(int i = 0; i < finalContainer.getChildCount(); i++) {
+                            View view = finalContainer.getChildAt(i);
+                            if (view instanceof RelativeLayout) {
+                                View editText = (View) ((RelativeLayout) view).getChildAt(0);
+                                EditText editText1 = (EditText) editText;
+                                str = editText1.getText().toString();
+                                Log.d("Entg000000000e", " === " + str.length());
+                            }
+                            if (str.length() < 1){
+                                ver = false;
+                            }
+                        }
+                        Log.e("========>>>>>>>>", "" + ver);
+                        if (ver == true) {
+                            insertar(finalContainer);
+                            btn_Save.setEnabled(false);
+                            btn_Save.setBackgroundColor(Color.parseColor("#60000000"));
+                            finalContainer.removeAllViews();
+                            cont[0] = 0;
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Hay campos vacios", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Elije un almacén", Toast.LENGTH_SHORT).show();
+                        spn_Almacen.requestFocus();
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Elije un equipo", Toast.LENGTH_SHORT).show();
+                    spn_TipoEquipo.requestFocus();
+                }
             }
         });
         btn_Escanear = (Button) findViewById(R.id.btn_Escanear);
@@ -259,17 +293,6 @@ public class Activity_AddData extends AppCompatActivity
                 }else{
                     Intent i = new Intent(Activity_AddData.this, CaptureActivity.class);
                     startActivityForResult(i,Resultado);
-                    /*
-                    finalContainer.getChildAt(cont[0]).requestFocus();
-                    View view = finalContainer.getChildAt(cont[0]);
-                    String str = "";
-                    if (view instanceof RelativeLayout) {
-                        View editText = (View) ((RelativeLayout) view).getChildAt(0);
-                        EditText editText1 = (EditText) editText;
-                        editText1.setText(_Codigo);
-                        Log.d("Entg000000000e", " === " + editText1);
-                    }
-                    */
                     finalContainer.getChildAt(cont[0]).requestFocus();
                     cont[0] = cont[0] + 1;
                     if (cont[0] == finalContainer.getChildCount()) {
@@ -282,12 +305,6 @@ public class Activity_AddData extends AppCompatActivity
                 }
             }
         });
-    }
-    private void eliminar() {
-        if (uriContacto != null) {
-            new TareaEliminarContacto(getContentResolver()).execute(uriContacto);
-            finish();
-        }
     }
 
     @Override
@@ -304,7 +321,6 @@ public class Activity_AddData extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
-
     }
 
     @Override
@@ -338,17 +354,17 @@ public class Activity_AddData extends AppCompatActivity
     }
 
     private void insertar(ViewGroup finalContainer) {
-        //ArrayList array = getAllChildren(finalContainer);
-
         for(int i = 0; i < finalContainer.getChildCount(); i++){
             View view = finalContainer.getChildAt(i);
             String str =finalContainer.getChildAt(i).toString();
+
             if (view instanceof RelativeLayout) {
                 View editText = (View) ((RelativeLayout) view).getChildAt(0);
                 EditText editText1 = (EditText) editText;
                 str = editText1.getText().toString();
                 Log.d("Entg000000000e", " === " + str);
             }
+
             String str_EquipoFolio = str;
             Integer int_EquipoRFID = 0;
             Integer int_TipoEquipoId = id_Tipo_Equipo;
@@ -374,32 +390,6 @@ public class Activity_AddData extends AppCompatActivity
             finish();
         }
     }
-    private ArrayList<View> getAllChildren(View v) {
-
-        if (!(v instanceof ViewGroup)) {
-            ArrayList<View> viewArrayList = new ArrayList<View>();
-            viewArrayList.add(v);
-            return viewArrayList;
-        }
-
-        ArrayList<View> result = new ArrayList<View>();
-
-        ViewGroup viewGroup = (ViewGroup) v;
-        for (int i = 0; i < viewGroup.getChildCount(); i++) {
-
-            View child = viewGroup.getChildAt(i);
-
-            ArrayList<View> viewArrayList = new ArrayList<View>();
-            viewArrayList.add(v);
-            viewArrayList.addAll(getAllChildren(child));
-
-            result.addAll(viewArrayList);
-        }
-        return result;
-    }
-    private boolean esNombreValido(String nombre) {
-        return !TextUtils.isEmpty(nombre);
-    }
 
     private void poblarViews(Cursor data) {
         if (!data.moveToNext()) {
@@ -407,7 +397,6 @@ public class Activity_AddData extends AppCompatActivity
         }
         spn_TipoEquipo.setPrompt(UConsultas.obtenerString(data, Inventarios.FK_TIPO_EQUIPO_ID));
         spn_Almacen.setPrompt(UConsultas.obtenerString(data, Inventarios.FK_EQUIPO_ALMACEN_ID));
-
     }
 
     static class TareaAnadirContacto extends AsyncTask<Uri, Void, Void> {
@@ -431,35 +420,6 @@ public class Activity_AddData extends AppCompatActivity
                 }
             } else {
                 resolver.insert(Inventarios.URI_CONTENIDO, valores);
-            }
-            return null;
-        }
-    }
-    static class TareaEliminarContacto extends AsyncTask<Uri, Void, Void> {
-        private final ContentResolver resolver;
-        public TareaEliminarContacto(ContentResolver resolver) {
-            this.resolver = resolver;
-        }
-        @Override
-        protected Void doInBackground(Uri... args) {
-        /*
-        Verificación: Si el registro no ha sido sincronizado aún, entonces puede eliminarse
-        directamente. De lo contrario se marca como 'eliminado' = 1
-         */
-            Cursor c = resolver.query(args[0], new String[]{Inventarios.INSERTADO}
-                    , null, null, null);
-            int insertado;
-            if (c != null && c.moveToNext()) {
-                insertado = UConsultas.obtenerInt(c, Inventarios.INSERTADO);
-            } else {
-                return null;
-            }
-            if (insertado == 1) {
-                resolver.delete(args[0], null, null);
-            } else if (insertado == 0) {
-                ContentValues valores = new ContentValues();
-                valores.put(Inventarios.ELIMINADO, 1);
-                resolver.update(args[0], valores, null, null);
             }
             return null;
         }

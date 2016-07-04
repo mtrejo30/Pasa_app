@@ -45,7 +45,7 @@ public class Activity_Login extends AppCompatActivity
     private String[][] clientes_res;
     private String[][] almacenes_res;
     private String[][] tipos_res;
-    boolean resul = true;
+    boolean resul = false;
     public static final String URI_CONTACTO = "extra.uriContacto";
     DbDataSource dataSource;
     private Uri uriContacto;
@@ -127,7 +127,6 @@ public class Activity_Login extends AppCompatActivity
                     new HttpGet("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/loginUser?user="+a+"&pass="+b+"&app=1");
             del.addHeader(BasicScheme.authenticate( new UsernamePasswordCredentials("adminLogistica", "Pasa123!"), "UTF-8", false));
             del.setHeader("content-type", "application/json");
-
             try
             {
                 HttpResponse resp = httpClient.execute(del);
@@ -135,7 +134,7 @@ public class Activity_Login extends AppCompatActivity
                 JSONArray respJSON = new JSONArray(respStr);
                 clientes = new String[respJSON.length()];
                 clientes_res = new String[respJSON.length()][3];
-                for(int i=0; i<respJSON.length(); i++)	        	{
+                for(int i=0; i<respJSON.length(); i++) {
                     JSONObject obj = respJSON.getJSONObject(i);
                     String idBranch = obj.getString("branchId");
                     String strName = obj.getString("name");
@@ -144,10 +143,16 @@ public class Activity_Login extends AppCompatActivity
                     clientes_res[i][1] = strName;
                     clientes_res[i][2] = strValida;
                     Log.d("TareaWSListar", "Metodo - for: " + i);
+                    Log.e("apiLogin", "=========>>>>>>>>>: " + strValida);
+                    /*if (Integer.parseInt(clientes_res[i][2]) == 1) {
+                        */
                     insertar(i);
+                    resul = true;
+                    /*} else {
+                        Toast.makeText(getApplicationContext(), "Datos Incorrectos", Toast.LENGTH_SHORT).show();
+                    }*/
                 }
 
-                resul = true;
             }
             catch(Exception ex)
             {
@@ -161,33 +166,35 @@ public class Activity_Login extends AppCompatActivity
         private void insertar(int i) {
             SQLiteDatabase db = baseDatos.getWritableDatabase();
             ContentValues valores = new ContentValues();
-            if(i == 0){
-                db.execSQL("delete from "+ Tablas.INVENTARIO);
-                db.execSQL("delete from "+ Tablas.TBL_CATALOGO_TIPO_EQUIPO);
-                db.execSQL("delete from "+ Tablas.TBL_CATALOGO_ALMACENES);
-                db.execSQL("delete from "+ Tablas.TBL_LOGIN_USER);
+            if (Integer.parseInt(clientes_res[0][2]) == 1) {
+                if (i == 0) {
+                    db.execSQL("delete from " + Tablas.INVENTARIO);
+                    db.execSQL("delete from " + Tablas.TBL_CATALOGO_TIPO_EQUIPO);
+                    db.execSQL("delete from " + Tablas.TBL_CATALOGO_ALMACENES);
+                    db.execSQL("delete from " + Tablas.TBL_LOGIN_USER);
+                    valores.clear();
+                    valores.put(cls_Columnas_Login_User.ID_INT_BRANCHID, 0);
+                    valores.put(cls_Columnas_Login_User.INT_USER, a);
+                    valores.put(cls_Columnas_Login_User.STR_PASS, b);
+                    valores.put(cls_Columnas_Login_User.STR_APP, 1);
+                    valores.put(cls_Columnas_Login_User.STR_NAME, "");
+                    valores.put(cls_Columnas_Login_User.INT_VALIDA, 0);
+                    db.insertOrThrow(HelperInventarios.Tablas.TBL_LOGIN_USER, null, valores);
+                }
+                Log.d("", " ===>> " + (clientes_res[i][0]));
+                Log.d("", " ===>> " + (clientes_res[i][1]));
+                Log.d("", " ===>> " + (clientes_res[i][2]));
+                Log.d("", " ===>> " + a);
+                Log.d("", " ===>> " + b);
                 valores.clear();
-                valores.put(cls_Columnas_Login_User.ID_INT_BRANCHID, 0);
+                valores.put(cls_Columnas_Login_User.ID_INT_BRANCHID, (Integer.parseInt(clientes_res[i][0])));
                 valores.put(cls_Columnas_Login_User.INT_USER, a);
                 valores.put(cls_Columnas_Login_User.STR_PASS, b);
                 valores.put(cls_Columnas_Login_User.STR_APP, 1);
-                valores.put(cls_Columnas_Login_User.STR_NAME, "");
-                valores.put(cls_Columnas_Login_User.INT_VALIDA, 0);
+                valores.put(cls_Columnas_Login_User.STR_NAME, (clientes_res[i][1]));
+                valores.put(cls_Columnas_Login_User.INT_VALIDA, (Integer.parseInt(clientes_res[i][2])));
                 db.insertOrThrow(HelperInventarios.Tablas.TBL_LOGIN_USER, null, valores);
             }
-            Log.d("", " ===>> " + (clientes_res[i][0]));
-            Log.d("", " ===>> " + (clientes_res[i][1]));
-            Log.d("", " ===>> " + (clientes_res[i][2]));
-            Log.d("", " ===>> " + a);
-            Log.d("", " ===>> " + b);
-            valores.clear();
-            valores.put(cls_Columnas_Login_User.ID_INT_BRANCHID, (Integer.parseInt(clientes_res[i][0])));
-            valores.put(cls_Columnas_Login_User.INT_USER, a);
-            valores.put(cls_Columnas_Login_User.STR_PASS, b);
-            valores.put(cls_Columnas_Login_User.STR_APP, 1);
-            valores.put(cls_Columnas_Login_User.STR_NAME, (clientes_res[i][1]));
-            valores.put(cls_Columnas_Login_User.INT_VALIDA, (Integer.parseInt(clientes_res[i][2])));
-            db.insertOrThrow(HelperInventarios.Tablas.TBL_LOGIN_USER, null, valores);
         }
         protected void onPostExecute(Boolean result) {
             if (result)            {
@@ -298,9 +305,9 @@ public class Activity_Login extends AppCompatActivity
             }
         }
     }
+
     //Tarea Asíncrona para llamar al WS de listado en segundo plano
     private class TareaWSListarTipoEquipo extends AsyncTask<String,Integer,Boolean> {
-
         String a = txt_User.getText().toString();
         String b = txt_Pass.getText().toString();
         protected Boolean doInBackground(String... params) {

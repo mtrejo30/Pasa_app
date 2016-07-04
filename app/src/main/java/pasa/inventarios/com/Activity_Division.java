@@ -41,34 +41,13 @@ public class Activity_Division extends AppCompatActivity {
         setContentView(R.layout.activity__division);
 
         dataSource = new DbDataSource(this);
-
-        /*Intent intent = getIntent();
-        String user = intent.getStringExtra("par_User");
-        String pass = intent.getStringExtra("par_Pass");
-        String branch = intent.getStringExtra("par_Branch");
-        String name = intent.getStringExtra("par_Name");
-        String valida = intent.getStringExtra("par_Valida");*/
-        /*Toast.makeText(getApplicationContext(),
-                "Us-" + user +":Pass-" + pass +":Bran-" + branch +":Nam-" + name +":Val-" + valida,
-                                                                    Toast.LENGTH_SHORT).show();*/
-
         spn_Division = (Spinner) findViewById(R.id.spn_Division);
-/*
-        TareaWSListar tarea1 = new TareaWSListar();
-        tarea1.execute();
-*/
-        // Initialize and set Adapter
         adap_Division = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_spinner_item,
                 arr_Division);
         adap_Division.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spn_Division.setAdapter(adap_Division);
-
-
-        /*
-        Creando Adaptador para GenreSpinner
-         */
 
         user_SpinnerAdapter = new SimpleCursorAdapter(
                 this,
@@ -79,8 +58,6 @@ public class Activity_Division extends AppCompatActivity {
                 SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);//Observer para el refresco
         spn_Division.setAdapter(user_SpinnerAdapter);
 
-
-        // Business Type Item Selected Listener
         spn_Division.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -114,55 +91,4 @@ public class Activity_Division extends AppCompatActivity {
             }
         });
     }
-/*
-    //Tarea Asíncrona para llamar al WS de listado en segundo plano
-    private class TareaWSListar extends AsyncTask<String,Integer,Boolean> {
-        private String[] clientes;
-
-        protected Boolean doInBackground(String... params) {
-            boolean resul = true;
-
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-
-            HttpGet del =
-                    new HttpGet("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/getCatalogoTipoEquipo");
-            del.addHeader(BasicScheme.authenticate( new UsernamePasswordCredentials("adminLogistica", "Pasa123!"), "UTF-8", false));
-            del.setHeader("content-type", "application/json");
-
-            try
-            {
-                HttpResponse resp = httpClient.execute(del);
-                String respStr = EntityUtils.toString(resp.getEntity());
-                JSONArray respJSON = new JSONArray(respStr);
-                clientes = new String[respJSON.length()];
-                for(int i=0; i<respJSON.length(); i++)               {
-                    JSONObject obj = respJSON.getJSONObject(i);
-                    int idCli = obj.getInt("tipoEquipoId");
-                    String nombCli = obj.getString("tipoEquipoClave");
-                    String telefCli = obj.getString("tipoEquipoDescripcion");
-                    clientes[i] = telefCli;
-
-                    Log.d("TareaWSListar", "Metodo - for: " + i);
-                }
-
-            }
-            catch(Exception ex)
-            {
-                Log.e("ServicioRest","Error!", ex);
-                resul = false;
-            }
-            return resul;
-        }
-        protected void onPostExecute(Boolean result) {
-            if (result)
-            {
-                //Rellenamos la lista con los nombres de los clientes
-                //Rellenamos la lista con los resultados
-                ArrayAdapter<String> adaptador =
-                        new ArrayAdapter<String>(Activity_Division.this,
-                                android.R.layout.simple_list_item_1, clientes);
-                spn_Division.setAdapter(adaptador);
-            }
-        }
-    }*/
 }
