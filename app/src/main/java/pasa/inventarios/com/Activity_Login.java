@@ -95,7 +95,6 @@ public class Activity_Login extends AppCompatActivity
             }
 
         }
-
     }
 
     @Override
@@ -176,9 +175,9 @@ public class Activity_Login extends AppCompatActivity
                 valores.put(cls_Columnas_Login_User.INT_VALIDA, 0);
                 db.insertOrThrow(HelperInventarios.Tablas.TBL_LOGIN_USER, null, valores);
             }
-            Log.d("", " ===>> " + (clientes_res[i][0].toString()));
-            Log.d("", " ===>> " + (clientes_res[i][1].toString()));
-            Log.d("", " ===>> " + (clientes_res[i][2].toString()));
+            Log.d("", " ===>> " + (clientes_res[i][0]));
+            Log.d("", " ===>> " + (clientes_res[i][1]));
+            Log.d("", " ===>> " + (clientes_res[i][2]));
             Log.d("", " ===>> " + a);
             Log.d("", " ===>> " + b);
             valores.clear();
@@ -186,13 +185,13 @@ public class Activity_Login extends AppCompatActivity
             valores.put(cls_Columnas_Login_User.INT_USER, a);
             valores.put(cls_Columnas_Login_User.STR_PASS, b);
             valores.put(cls_Columnas_Login_User.STR_APP, 1);
-            valores.put(cls_Columnas_Login_User.STR_NAME, (clientes_res[i][1].toString()));
+            valores.put(cls_Columnas_Login_User.STR_NAME, (clientes_res[i][1]));
             valores.put(cls_Columnas_Login_User.INT_VALIDA, (Integer.parseInt(clientes_res[i][2])));
             db.insertOrThrow(HelperInventarios.Tablas.TBL_LOGIN_USER, null, valores);
         }
         protected void onPostExecute(Boolean result) {
             if (result)            {
-                if (Integer.parseInt(clientes_res[0][2].toString()) == 1){
+                if (Integer.parseInt(clientes_res[0][2]) == 1){
                     TareaWSListarCatalogosAlmacenes tarea2 = new TareaWSListarCatalogosAlmacenes();
                     tarea2.execute();
                 }
@@ -221,7 +220,7 @@ public class Activity_Login extends AppCompatActivity
                     new HttpGet("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/getCatalogoAlmacenes?branchId="+(Integer.parseInt(clientes_res[0][0])));
             del.addHeader(BasicScheme.authenticate( new UsernamePasswordCredentials("adminLogistica", "Pasa123!"), "UTF-8", false));
             del.setHeader("content-type", "application/json");
-            Log.d("Aquiiiiiii", " ======================================>> " + (clientes_res[0][0].toString()));
+            Log.d("Aquiiiiiii", " ======================================>> " + (clientes_res[0][0]));
 
             try
             {
@@ -266,10 +265,10 @@ public class Activity_Login extends AppCompatActivity
                 db.insertOrThrow(Tablas.TBL_CATALOGO_ALMACENES, null, valores);
             }
 
-            Log.d("", " ===>> " + (almacenes_res[i][0].toString()));
-            Log.d("", " ===>> " + (almacenes_res[i][1].toString()));
-            Log.d("", " ===>> " + (almacenes_res[i][2].toString()));
-            Log.d("", " ===>> " + (almacenes_res[i][3].toString()));
+            Log.d("", " ===>> " + (almacenes_res[i][0]));
+            Log.d("", " ===>> " + (almacenes_res[i][1]));
+            Log.d("", " ===>> " + (almacenes_res[i][2]));
+            Log.d("", " ===>> " + (almacenes_res[i][3]));
             valores.clear();
             valores.put(cls_Columnas_Catalogo_Almacenes.ID_INT_EQUIPO_ALMACEN_ID, (Integer.parseInt(almacenes_res[i][0])));
             valores.put(cls_Columnas_Catalogo_Almacenes.STR_EQUIPO_ALMACEN_CLAVE, almacenes_res[i][1]);
@@ -281,7 +280,7 @@ public class Activity_Login extends AppCompatActivity
 
         protected void onPostExecute(Boolean result) {
             if (result)            {
-                if (Integer.parseInt(clientes_res[0][2].toString()) == 1){
+                if (Integer.parseInt(clientes_res[0][2]) == 1){
                     TareaWSListarTipoEquipo tarea3 = new TareaWSListarTipoEquipo();
                     tarea3.execute();
 
@@ -310,7 +309,7 @@ public class Activity_Login extends AppCompatActivity
                     new HttpGet("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/getCatalogoTipoEquipo");
             del.addHeader(BasicScheme.authenticate( new UsernamePasswordCredentials("adminLogistica", "Pasa123!"), "UTF-8", false));
             del.setHeader("content-type", "application/json");
-            Log.d("Aquiiiiiii", " ======================================>> " + (almacenes_res[0][0].toString()));
+            Log.d("Aquiiiiiii", " ======================================>> " + (almacenes_res[0][0]));
             try
             {
                 HttpResponse resp = httpClient.execute(del);
@@ -360,12 +359,12 @@ public class Activity_Login extends AppCompatActivity
                 db.insertOrThrow(Tablas.TBL_CATALOGO_TIPO_EQUIPO, null, valores);
             }
 
-            Log.d("", " ===>> " + (tipos_res[i][0].toString()));
-            Log.d("", " ===>> " + (tipos_res[i][1].toString()));
-            Log.d("", " ===>> " + (tipos_res[i][2].toString()));
-            Log.d("", " ===>> " + (tipos_res[i][3].toString()));
-            Log.d("", " ===>> " + (tipos_res[i][4].toString()));
-            Log.d("", " ===>> " + (tipos_res[i][5].toString()));
+            Log.d("", " ===>> " + (tipos_res[i][0]));
+            Log.d("", " ===>> " + (tipos_res[i][1]));
+            Log.d("", " ===>> " + (tipos_res[i][2]));
+            Log.d("", " ===>> " + (tipos_res[i][3]));
+            Log.d("", " ===>> " + (tipos_res[i][4]));
+            Log.d("", " ===>> " + (tipos_res[i][5]));
             valores.clear();
             valores.put(cls_Columnas_Catalogo_Tipo_Equipo.ID_INT_TIPO_EQUIPO_ID, (Integer.parseInt(tipos_res[i][0])));
             valores.put(cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_CLAVE, tipos_res[i][1]);
@@ -378,13 +377,13 @@ public class Activity_Login extends AppCompatActivity
 
         protected void onPostExecute(Boolean result) {
             if (result)            {
-                if (Integer.parseInt(clientes_res[0][2].toString()) == 1){
+                if (Integer.parseInt(clientes_res[0][2]) == 1){
                     if(clientes_res.length == 1){
-                        Log.d("Adios", " ===>> " + (Integer.parseInt(clientes_res[0][2].toString())));
+                        Log.d("Adios", " ===>> " + (Integer.parseInt(clientes_res[0][2])));
                         Intent i = new Intent(Activity_Login.this, Activity_Home.class);
                         startActivity(i);
                     }else {
-                        Log.d("Adios", " ===>> " + (Integer.parseInt(clientes_res[0][2].toString())));
+                        Log.d("Adios", " ===>> " + (Integer.parseInt(clientes_res[0][2])));
                         Intent i = new Intent(Activity_Login.this, Activity_Division.class);
                         startActivity(i);
                     }
