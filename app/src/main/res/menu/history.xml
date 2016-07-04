@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Menú del historial de escaneer -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:id="@+id/menu_history_clear_text"
+        android:title="@string/history_clear_text"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:orderInCategory="2"/>
+</menu>
