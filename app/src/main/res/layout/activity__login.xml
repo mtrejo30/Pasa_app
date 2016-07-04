@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#7A7676"
+    tools:context="pasa.inventarios.com.Activity_Login"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingTop="50dp"
+        android:paddingBottom="50dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:orientation="vertical"
+        android:weightSum="1">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="#fff"
+            android:paddingTop="40dp"
+            android:paddingRight="35dp"
+            android:paddingLeft="35dp"
+            android:layout_weight="0.94">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_marginBottom="24dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/logo_login"/>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="No. de Empleado"
+                    android:inputType="number"
+                    android:id="@+id/idtUsuario"
+                    android:shadowColor="@color/colorPrimaryTex"
+                    android:textColorHint="@color/colorPrimaryTex"
+                    />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Contraseña"
+                    android:inputType="textPassword"
+                    android:id="@+id/editText"
+                    android:textColorHint="@color/colorPrimaryTex"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginTop="24dp"
+                android:text="Entrar"
+                android:id="@+id/btnAceptar"
+                android:textColor="@color/colorPrimaryT"
+                android:background="@color/colorPrimary"
+                />
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Guardar sesión"
+                android:id="@+id/checkBox"
+                android:layout_marginBottom="10dp"/>
+
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
