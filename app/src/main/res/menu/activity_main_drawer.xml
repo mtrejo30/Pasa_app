@@ -4,15 +4,27 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:id="@+id/nav_datos"
-            android:icon="@drawable/ic_description_black_24dp"
-            android:title="Carga de Datos" />
-        <item
             android:id="@+id/nav_perfil"
             android:icon="@drawable/ic_person_black_24dp"
             android:title="Perfil" />
         <item
-            android:id="@+id/nav_salir"
+            android:id="@+id/nav_Agregar"
+            android:icon="@drawable/ic_description_black_24dp"
+            android:title="Carga de Datos" />
+        <item
+            android:id="@+id/nav_InventarioDiario"
+            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:title="Inventario Diario" />
+        <item
+            android:id="@+id/nav_ConsultaInventarioDiario"
+            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:title="Consulta Inventario Diario" />
+        <item
+            android:id="@+id/nav_Sincronizar"
+            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:title="Sincronizar" />
+        <item
+            android:id="@+id/nav_Salir"
             android:icon="@drawable/ic_lock_open_black_24dp"
             android:title="Salir" />
     </group>

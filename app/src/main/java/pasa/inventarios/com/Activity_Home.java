@@ -15,8 +15,9 @@ import android.widget.Button;
 public class Activity_Home extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     private Button btn_Acceder;
-    private Button btn_Mostrar_Api;
-    private Button btn_Lista;
+    private Button btn_ConsultaInventarioDiario;
+    private Button btn_Sincronizacion;
+    private Button btn_Inventario_Diario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +39,13 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
 
         btn_Acceder = (Button) findViewById(R.id.btn_AgregarDatos);
         btn_Acceder.setOnClickListener(this);
-        btn_Mostrar_Api = (Button) findViewById(R.id.btn_MostrarDatos);
-        btn_Mostrar_Api.setOnClickListener(this);
-        btn_Lista = (Button) findViewById(R.id.btn_EditarDatos);
-        btn_Lista.setOnClickListener(this);
+        btn_ConsultaInventarioDiario = (Button) findViewById(R.id.btn_ConsultaInventarioDiario);
+        btn_ConsultaInventarioDiario.setOnClickListener(this);
+        btn_Sincronizacion = (Button) findViewById(R.id.btn_Sincronizacion);
+        btn_Sincronizacion.setOnClickListener(this);
+        btn_Inventario_Diario = (Button) findViewById(R.id.btn_InventarioDiario);
+        btn_Inventario_Diario.setOnClickListener(this);
+
     }
 
     @Override
@@ -62,13 +66,15 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
             Intent i = new Intent(v.getContext(), Activity_AddData.class);
             startActivity(i);
         }
-        if (v.getId() == R.id.btn_MostrarDatos){
-            Intent i = new Intent(v.getContext(), Activity_ShowData.class);
+        if (v.getId() == R.id.btn_InventarioDiario){
+            Intent i = new Intent(v.getContext(), Activity_Inventario_Diario.class);
             startActivity(i);
         }
-        if (v.getId() == R.id.btn_EditarDatos){
+        if (v.getId() == R.id.btn_Sincronizacion){
             Intent i = new Intent(v.getContext(), Actividad_Lista_Inventarios.class);
             startActivity(i);
+        }
+        if (v.getId() == R.id.btn_ConsultaInventarioDiario){
         }
     }
 
@@ -77,13 +83,10 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
 
         int id = item.getItemId();
 
-        if (id == R.id.nav_datos) {
+
+        if (id == R.id.nav_perfil) {
         }
-        else if (id == R.id.nav_perfil) {
-        }
-        else if (id == R.id.nav_salir) {
-            System.exit(0);
-        }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

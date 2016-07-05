@@ -94,19 +94,12 @@ public class Activity_ShowData extends AppCompatActivity
 
         int id = item.getItemId();
 
-        if (id == R.id.nav_datos) {
+        if (id == R.id.nav_perfil) {
         }
-        else if (id == R.id.nav_perfil) {
-        }
-        else if (id == R.id.nav_salir) {
-            System.exit(0);
-        }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
     //Tarea Asíncrona para llamar al WS de inserción en segundo plano
     private class TareaWSInsertar extends AsyncTask<String,Integer,Boolean> {
         public int contador = 0;

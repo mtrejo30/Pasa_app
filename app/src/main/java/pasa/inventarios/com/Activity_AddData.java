@@ -67,15 +67,11 @@ public class Activity_AddData extends AppCompatActivity
     LinearLayout container;
     View addView;
     ViewGroup finalContainer;
-
     SimpleCursorAdapter genreSpinnerAdapter1;
     SimpleCursorAdapter genreSpinnerAdapter2;
-
     DbDataSource dataSource;
     private static Activity_AddData instancia = new Activity_AddData();
-
     public static final String URI_CONTACTO = "extra.uriContacto";
-
     private Uri uriContacto;
 
     public Activity_AddData obtenerInstancia(Context contexto) {
@@ -115,6 +111,7 @@ public class Activity_AddData extends AppCompatActivity
 
         }
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -291,8 +288,10 @@ public class Activity_AddData extends AppCompatActivity
                     btn_Save.setBackgroundColor(Color.parseColor("#017A42"));
                     txt_Cantidad.setText("");
                 }else{
+
                     Intent i = new Intent(Activity_AddData.this, CaptureActivity.class);
                     startActivityForResult(i,Resultado);
+
                     finalContainer.getChildAt(cont[0]).requestFocus();
                     cont[0] = cont[0] + 1;
                     if (cont[0] == finalContainer.getChildCount()) {
@@ -326,12 +325,7 @@ public class Activity_AddData extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.nav_datos) {
-        }
-        else if (id == R.id.nav_perfil) {
-        }
-        else if (id == R.id.nav_salir) {
-            System.exit(0);
+        if (id == R.id.nav_perfil) {
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -416,7 +410,6 @@ public class Activity_AddData extends AppCompatActivity
                     if (UConsultas.obtenerInt(c, Inventarios.INSERTADO) == 0) {
                         valores.put(Inventarios.MODIFICADO, 1);
                     }
-
                 }
             } else {
                 resolver.insert(Inventarios.URI_CONTENIDO, valores);

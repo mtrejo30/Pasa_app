@@ -165,7 +165,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     if (prefs.getBoolean(PreferencesActivity.KEY_DISABLE_AUTO_ORIENTATION, true)) {
       setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     } else {
-      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+      setRequestedOrientation(getCurrentOrientation());
     }
 
     resetStatusView();
@@ -574,7 +574,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         button.setVisibility(View.GONE);
       }
     }
-
     Log.d("Msj", " - " + contentsTextView.getText().toString());
     /*Intent mIntent = new Intent(this, Activity_AddData.class);
     Bundle mBundle = new Bundle();
@@ -585,7 +584,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     Intent intent=new Intent();
     intent.putExtra("id_codigo",contentsTextView.getText().toString());
     setResult(RESULT_OK,intent);
-
     finish();
 
 
