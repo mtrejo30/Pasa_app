@@ -20,6 +20,7 @@ public class HelperInventarios extends SQLiteOpenHelper {
         String TBL_CATALOGO_TIPO_EQUIPO = "tbl_CatalogoTipoEquipo";
         String INVENTARIO = "inventario";
     }
+
     public HelperInventarios(Context context) {
         super(context, NOMBRE_BD, null, VERSION);
     }
@@ -68,7 +69,7 @@ public class HelperInventarios extends SQLiteOpenHelper {
                         + Inventarios.MODIFICADO + " INTEGER DEFAULT 0,"
                         + Inventarios.ELIMINADO + " INTEGER DEFAULT 0,"
                         + " FOREIGN KEY (" + Inventarios.FK_TIPO_EQUIPO_ID + ") REFERENCES " + Tablas.TBL_CATALOGO_TIPO_EQUIPO + "(" + cls_Columnas_Catalogo_Tipo_Equipo.ID_INT_TIPO_EQUIPO_ID + "),"
-                        + " FOREIGN KEY (" + Inventarios.FK_EQUIPO_ALMACEN_ID + ") REFERENCES " + Tablas.TBL_LOGIN_USER + "(" + cls_Columnas_Catalogo_Almacenes.ID_INT_EQUIPO_ALMACEN_ID + "),"
+                        + " FOREIGN KEY (" + Inventarios.FK_EQUIPO_ALMACEN_ID + ") REFERENCES " + Tablas.TBL_CATALOGO_ALMACENES + "(" + cls_Columnas_Catalogo_Almacenes.ID_INT_EQUIPO_ALMACEN_ID + "),"
                         + " FOREIGN KEY (" + Inventarios.FK_BRANCH_ID + ") REFERENCES " + Tablas.TBL_LOGIN_USER + "(" + cls_Columnas_Login_User.ID_INT_BRANCHID + "))");
 
     }

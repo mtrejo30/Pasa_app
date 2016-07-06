@@ -94,7 +94,7 @@ public class Activity_AddData extends AppCompatActivity
 
         if(resultCode==RESULT_OK){
             _Codigo = data.getStringExtra("id_codigo");
-            Log.e("Codigo==========>", " -RESULtttttttttt===============>>> " + _Codigo);
+            //Log.e("Codigo==========>", " -RESULtttttttttt===============>>> " + _Codigo);
 
             View view = finalContainer.getChildAt(cont[0] - 1);
             String str = "";
@@ -106,7 +106,7 @@ public class Activity_AddData extends AppCompatActivity
                 {
                     contador = contador + 1;
                 }
-                Log.e("", " =======>>>>>>> " + editText1 + " =======>>>>>>" + contador);
+                //Log.e("", " =======>>>>>>> " + editText1 + " =======>>>>>>" + contador);
             }
 
         }
@@ -122,7 +122,6 @@ public class Activity_AddData extends AppCompatActivity
                 .SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         dataSource = new DbDataSource(this);
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -142,7 +141,7 @@ public class Activity_AddData extends AppCompatActivity
             uriContacto = Uri.parse(uri);
             getSupportLoaderManager().restartLoader(1, null, this);
         }
-        // /////////////////////////////////////////////////////////////////
+
         spn_TipoEquipo = (Spinner) findViewById(R.id.spn_TipoEquipo);
         genreSpinnerAdapter1 = new SimpleCursorAdapter(
                 this,
@@ -160,7 +159,7 @@ public class Activity_AddData extends AppCompatActivity
                 String str_Tip_Equi = colCur.getString(colCur.getColumnIndex(Contrato
                         .cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_DESCRIPCION));
                 str_Tipo_Equipo = str_Tip_Equi;
-                Log.e("División", "Item==================: "+ str_Tip_Equi);
+                //Log.e("División", "Item==================: "+ str_Tip_Equi);
                 id_Tipo_Equipo = (int) id;
                 /*Toast.makeText(getApplicationContext(),
                         "Id-TipoEquipo: ===>>>" + id_Tipo_Equipo, Toast.LENGTH_SHORT).show();*/
@@ -170,7 +169,7 @@ public class Activity_AddData extends AppCompatActivity
             {
             }
         });
-        // //////////////////////////////////////////////////////////////////
+
         spn_Almacen = (Spinner) findViewById(R.id.spn_Almacen);
         genreSpinnerAdapter2 = new SimpleCursorAdapter(
                 this,
@@ -191,7 +190,7 @@ public class Activity_AddData extends AppCompatActivity
                         cls_Columnas_Catalogo_Almacenes.FK_INT_BRANCHID));
                 str_Equipo_Almacen = str_Alm;
                 id_Branch = Integer.parseInt(str_Bran);
-                Log.e("División", "Item==================: "+ str_Alm + " --------- " + id_Branch);
+                //Log.e("División", "Item==================: "+ str_Alm + " --------- " + id_Branch);
                 id_Equipo_Almacen = (int) id;
                 /*Toast.makeText(getApplicationContext(),
                         "Id-Almacen: ===>>>" + id_Equipo_Almacen + " --- ",
@@ -249,13 +248,13 @@ public class Activity_AddData extends AppCompatActivity
                                 View editText = (View) ((RelativeLayout) view).getChildAt(0);
                                 EditText editText1 = (EditText) editText;
                                 str = editText1.getText().toString();
-                                Log.d("Entg000000000e", " === " + str.length());
+                                //Log.d("Entg000000000e", " === " + str.length());
                             }
                             if (str.length() < 1){
                                 ver = false;
                             }
                         }
-                        Log.e("========>>>>>>>>", "" + ver);
+                        //Log.e("========>>>>>>>>", "" + ver);
                         if (ver == true) {
                             insertar(finalContainer);
                             btn_Save.setEnabled(false);
@@ -288,7 +287,6 @@ public class Activity_AddData extends AppCompatActivity
                     btn_Save.setBackgroundColor(Color.parseColor("#017A42"));
                     txt_Cantidad.setText("");
                 }else{
-
                     Intent i = new Intent(Activity_AddData.this, CaptureActivity.class);
                     startActivityForResult(i,Resultado);
 
@@ -356,7 +354,7 @@ public class Activity_AddData extends AppCompatActivity
                 View editText = (View) ((RelativeLayout) view).getChildAt(0);
                 EditText editText1 = (EditText) editText;
                 str = editText1.getText().toString();
-                Log.d("Entg000000000e", " === " + str);
+                //Log.d("Entg000000000e", " === " + str);
             }
 
             String str_EquipoFolio = str;
