@@ -73,7 +73,6 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
         return instancia;
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

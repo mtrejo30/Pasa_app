@@ -75,6 +75,8 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
             startActivity(i);
         }
         if (v.getId() == R.id.btn_ConsultaInventarioDiario){
+            Intent i = new Intent(v.getContext(), Activity_Consulta_Inventario_Diario.class);
+            startActivity(i);
         }
     }
 

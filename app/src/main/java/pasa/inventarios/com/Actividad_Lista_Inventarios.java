@@ -20,7 +20,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.apache.http.HttpResponse;
@@ -39,6 +41,7 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
         AdaptadorInventarios.OnItemClickListener{
     private static final String TAG = Actividad_Lista_Inventarios.class.getSimpleName();
     // Referencias UI
+
     private RecyclerView reciclador;
     private LinearLayoutManager layoutManager;
     private AdaptadorInventarios adaptador;
@@ -46,6 +49,13 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
     boolean result = false;
     Button btn_Inve1;
     ArrayList lista;
+
+    private TextView lblEtiqueta;
+    private ListView lstOpciones;
+
+    final String[] datos = new String[]{"Elem1","Elem2","Elem3","Elem4","Elem5"};
+
+
     private static Activity_Login instancia = new Activity_Login();
     public Activity_Login obtenerInstancia(Context contexto) {
         if (baseDatos == null) {
@@ -85,6 +95,14 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
                 }
             }
         });
+
+        ArrayAdapter<String> adaptador =
+                new ArrayAdapter<String>(this,
+                        android.R.layout.simple_list_item_1, datos);
+
+        lstOpciones = (ListView)findViewById(R.id.LstOpciones);
+
+        lstOpciones.setAdapter(adaptador);
 
         if (reciclador.getChildCount() > 0) {
             Log.e("PreparaBotones", "=========" + reciclador.getChildCount());

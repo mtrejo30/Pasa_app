@@ -34,13 +34,4 @@
 
     </LinearLayout>
     <include layout="@layout/contenido_actividad_lista"/>
-    <!--
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/margenes_fab"
-        android:src="@android:drawable/ic_dialog_email" />
-    -->
 </android.support.design.widget.CoordinatorLayout>
