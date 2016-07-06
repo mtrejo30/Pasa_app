@@ -1,0 +1,22 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <Button
+        android:id="@+id/remove"
+        android:layout_width="30sp"
+        android:layout_height="30sp"
+        android:textSize="7dp"
+        android:layout_alignParentRight="true"
+        android:text="x"/>
+
+    <EditText
+        android:id="@+id/editext_BarCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/result_minor_text"
+        android:textColor="@color/contents_text"
+        android:layout_alignParentLeft="true" />
+    <!--android:layout_toLeftOf="@id/remove"-->
+</RelativeLayout>

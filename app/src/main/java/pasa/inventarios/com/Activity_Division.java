@@ -1,6 +1,9 @@
 package pasa.inventarios.com;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,16 +16,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import butterknife.OnItemSelected;
+import pasa.inventarios.com.Contrato.*;
+import pasa.inventarios.com.HelperInventarios.*;
 
 public class Activity_Division extends AppCompatActivity {
 
@@ -34,11 +29,23 @@ public class Activity_Division extends AppCompatActivity {
 
     SimpleCursorAdapter user_SpinnerAdapter;
     DbDataSource dataSource;
+    HelperInventarios baseDatos;
+
+    private static Activity_Division instancia = new Activity_Division();
+
+    public Activity_Division obtenerInstancia(Context contexto) {
+        if (baseDatos == null) {
+            baseDatos = new HelperInventarios(contexto);
+        }
+        return instancia;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__division);
+
+        obtenerInstancia(getApplicationContext());
 
         dataSource = new DbDataSource(this);
         spn_Division = (Spinner) findViewById(R.id.spn_Division);
@@ -65,14 +72,26 @@ public class Activity_Division extends AppCompatActivity {
                 Cursor colCur=(Cursor)spn_Division.getSelectedItem();
                 String str_Div = colCur.getString(colCur.getColumnIndex(Contrato.cls_Columnas_Login_User.STR_NAME));
                 Log.e("División", "Item==================: "+ str_Div);
-
-                String col=colCur.getString(0);
-                String col0=colCur.getString(1);
-                String col1=colCur.getString(2);
-                String col2=colCur.getString(3);
-                String col3=colCur.getString(4);
-                String col4=colCur.getString(5);
+                String a = colCur.getString(0);
+                String s = colCur.getString(1);
+                String d = colCur.getString(2);
+                String f = colCur.getString(3);
+                String g = colCur.getString(4);
+                String h = colCur.getString(5);
+                String j = colCur.getString(6);
                 str_Division = parent.getItemAtPosition(position).toString();
+
+                SQLiteDatabase db = baseDatos.getWritableDatabase();
+                ContentValues valores = new ContentValues();
+                valores.clear();
+                db.execSQL("UPDATE "+ Tablas.TBL_LOGIN_USER +" SET int_select= " + 0);
+                valores.clear();
+                db.execSQL("UPDATE "+ Tablas.TBL_LOGIN_USER +" SET int_select= " + 1 + " WHERE _id= " + a);
+                //valores.put(cls_Columnas_Login_User.INT_SELECT, 1);
+                //db.update(Tablas.TBL_LOGIN_USER, valores, "_id=" + a, null);
+
+                //Log.e("", "================>>>>>>>>>>>>>>" + a + "--" + s + "--" + d + "--" + f + "--" + g + "--" + h + "--" + j);
+
                 if(position == 0){
                     // Showing selected spinner item
                     Toast.makeText(getApplicationContext(),

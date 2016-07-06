@@ -46,10 +46,12 @@ public class Activity_Login extends AppCompatActivity
     private String[][] almacenes_res;
     private String[][] tipos_res;
     boolean resul = false;
+    String str_Division = "División Default";
     public static final String URI_CONTACTO = "extra.uriContacto";
     DbDataSource dataSource;
     private Uri uriContacto;
     HelperInventarios baseDatos;
+
     private static Activity_Login instancia = new Activity_Login();
 
     public Activity_Login obtenerInstancia(Context contexto) {
@@ -172,6 +174,7 @@ public class Activity_Login extends AppCompatActivity
                     db.execSQL("delete from " + Tablas.TBL_CATALOGO_TIPO_EQUIPO);
                     db.execSQL("delete from " + Tablas.TBL_CATALOGO_ALMACENES);
                     db.execSQL("delete from " + Tablas.TBL_LOGIN_USER);
+                    db.execSQL("delete from " + Tablas.TBL_INVENTARIO_DIARIO);
                     valores.clear();
                     valores.put(cls_Columnas_Login_User.ID_INT_BRANCHID, 0);
                     valores.put(cls_Columnas_Login_User.INT_USER, a);
@@ -179,25 +182,28 @@ public class Activity_Login extends AppCompatActivity
                     valores.put(cls_Columnas_Login_User.STR_APP, 1);
                     valores.put(cls_Columnas_Login_User.STR_NAME, "");
                     valores.put(cls_Columnas_Login_User.INT_VALIDA, 0);
+                    valores.put(cls_Columnas_Login_User.INT_SELECT, 0);
                     db.insertOrThrow(HelperInventarios.Tablas.TBL_LOGIN_USER, null, valores);
                 }
-                Log.d("", " ===>> " + (clientes_res[i][0]));
-                Log.d("", " ===>> " + (clientes_res[i][1]));
-                Log.d("", " ===>> " + (clientes_res[i][2]));
-                Log.d("", " ===>> " + a);
-                Log.d("", " ===>> " + b);
-                valores.clear();
-                valores.put(cls_Columnas_Login_User.ID_INT_BRANCHID, (Integer.parseInt(clientes_res[i][0])));
-                valores.put(cls_Columnas_Login_User.INT_USER, a);
-                valores.put(cls_Columnas_Login_User.STR_PASS, b);
-                valores.put(cls_Columnas_Login_User.STR_APP, 1);
-                valores.put(cls_Columnas_Login_User.STR_NAME, (clientes_res[i][1]));
-                valores.put(cls_Columnas_Login_User.INT_VALIDA, (Integer.parseInt(clientes_res[i][2])));
-                db.insertOrThrow(HelperInventarios.Tablas.TBL_LOGIN_USER, null, valores);
+                    Log.d("", " ===>> " + (clientes_res[i][0]));
+                    Log.d("", " ===>> " + (clientes_res[i][1]));
+                    Log.d("", " ===>> " + (clientes_res[i][2]));
+                    Log.d("", " ===>> " + a);
+                    Log.d("", " ===>> " + b);
+                    valores.clear();
+                    valores.put(cls_Columnas_Login_User.ID_INT_BRANCHID, (Integer.parseInt(clientes_res[i][0])));
+                    valores.put(cls_Columnas_Login_User.INT_USER, a);
+                    valores.put(cls_Columnas_Login_User.STR_PASS, b);
+                    valores.put(cls_Columnas_Login_User.STR_APP, 1);
+                    valores.put(cls_Columnas_Login_User.STR_NAME, (clientes_res[i][1]));
+                    valores.put(cls_Columnas_Login_User.INT_VALIDA, (Integer.parseInt(clientes_res[i][2])));
+                    valores.put(cls_Columnas_Login_User.INT_SELECT, 0);
+                    db.insertOrThrow(HelperInventarios.Tablas.TBL_LOGIN_USER, null, valores);
+
             }
         }
         protected void onPostExecute(Boolean result) {
-            if (result)            {
+            if (result) {
                 if (Integer.parseInt(clientes_res[0][2]) == 1){
                     TareaWSListarCatalogosAlmacenes tarea2 = new TareaWSListarCatalogosAlmacenes();
                     tarea2.execute();
@@ -264,6 +270,7 @@ public class Activity_Login extends AppCompatActivity
             SQLiteDatabase db = baseDatos.getWritableDatabase();
             ContentValues valores = new ContentValues();
             if(i == 0){
+                Log.e("===>>>", "Pasé al if" );
                 valores.clear();
                 valores.put(cls_Columnas_Catalogo_Almacenes.ID_INT_EQUIPO_ALMACEN_ID, 0);
                 valores.put(cls_Columnas_Catalogo_Almacenes.STR_EQUIPO_ALMACEN_CLAVE, 0);
@@ -271,17 +278,17 @@ public class Activity_Login extends AppCompatActivity
                 valores.put(cls_Columnas_Catalogo_Almacenes.FK_INT_BRANCHID, 0);
                 db.insertOrThrow(Tablas.TBL_CATALOGO_ALMACENES, null, valores);
             }
+                Log.d("", " ===>> " + (almacenes_res[i][0]));
+                Log.d("", " ===>> " + (almacenes_res[i][1]));
+                Log.d("", " ===>> " + (almacenes_res[i][2]));
+                Log.d("", " ===>> " + (almacenes_res[i][3]));
+                valores.clear();
+                valores.put(cls_Columnas_Catalogo_Almacenes.ID_INT_EQUIPO_ALMACEN_ID, (Integer.parseInt(almacenes_res[i][0])));
+                valores.put(cls_Columnas_Catalogo_Almacenes.STR_EQUIPO_ALMACEN_CLAVE, almacenes_res[i][1]);
+                valores.put(cls_Columnas_Catalogo_Almacenes.STR_EQUIPO_ALMACEN_DESCRIPCION, almacenes_res[i][2]);
+                valores.put(cls_Columnas_Catalogo_Almacenes.FK_INT_BRANCHID, almacenes_res[i][3]);
+                db.insertOrThrow(Tablas.TBL_CATALOGO_ALMACENES, null, valores);
 
-            Log.d("", " ===>> " + (almacenes_res[i][0]));
-            Log.d("", " ===>> " + (almacenes_res[i][1]));
-            Log.d("", " ===>> " + (almacenes_res[i][2]));
-            Log.d("", " ===>> " + (almacenes_res[i][3]));
-            valores.clear();
-            valores.put(cls_Columnas_Catalogo_Almacenes.ID_INT_EQUIPO_ALMACEN_ID, (Integer.parseInt(almacenes_res[i][0])));
-            valores.put(cls_Columnas_Catalogo_Almacenes.STR_EQUIPO_ALMACEN_CLAVE, almacenes_res[i][1]);
-            valores.put(cls_Columnas_Catalogo_Almacenes.STR_EQUIPO_ALMACEN_DESCRIPCION, almacenes_res[i][2]);
-            valores.put(cls_Columnas_Catalogo_Almacenes.FK_INT_BRANCHID, almacenes_res[i][3]);
-            db.insertOrThrow(Tablas.TBL_CATALOGO_ALMACENES, null, valores);
 
         }
 
@@ -365,28 +372,36 @@ public class Activity_Login extends AppCompatActivity
                 valores.put(cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_MOVIMIENTO, "");
                 db.insertOrThrow(Tablas.TBL_CATALOGO_TIPO_EQUIPO, null, valores);
             }
+                Log.d("", " ===>> " + (tipos_res[i][0]));
+                Log.d("", " ===>> " + (tipos_res[i][1]));
+                Log.d("", " ===>> " + (tipos_res[i][2]));
+                Log.d("", " ===>> " + (tipos_res[i][3]));
+                Log.d("", " ===>> " + (tipos_res[i][4]));
+                Log.d("", " ===>> " + (tipos_res[i][5]));
+                valores.clear();
+                valores.put(cls_Columnas_Catalogo_Tipo_Equipo.ID_INT_TIPO_EQUIPO_ID, (Integer.parseInt(tipos_res[i][0])));
+                valores.put(cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_CLAVE, tipos_res[i][1]);
+                valores.put(cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_DESCRIPCION, tipos_res[i][2]);
+                valores.put(cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_CAPACIDAD, tipos_res[i][3]);
+                valores.put(cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_UNIDAD_MEDIDA, tipos_res[i][4]);
+                valores.put(cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_MOVIMIENTO, tipos_res[i][5]);
+                db.insertOrThrow(Tablas.TBL_CATALOGO_TIPO_EQUIPO, null, valores);
 
-            Log.d("", " ===>> " + (tipos_res[i][0]));
-            Log.d("", " ===>> " + (tipos_res[i][1]));
-            Log.d("", " ===>> " + (tipos_res[i][2]));
-            Log.d("", " ===>> " + (tipos_res[i][3]));
-            Log.d("", " ===>> " + (tipos_res[i][4]));
-            Log.d("", " ===>> " + (tipos_res[i][5]));
-            valores.clear();
-            valores.put(cls_Columnas_Catalogo_Tipo_Equipo.ID_INT_TIPO_EQUIPO_ID, (Integer.parseInt(tipos_res[i][0])));
-            valores.put(cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_CLAVE, tipos_res[i][1]);
-            valores.put(cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_DESCRIPCION, tipos_res[i][2]);
-            valores.put(cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_CAPACIDAD, tipos_res[i][3]);
-            valores.put(cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_UNIDAD_MEDIDA, tipos_res[i][4]);
-            valores.put(cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_MOVIMIENTO, tipos_res[i][5]);
-            db.insertOrThrow(Tablas.TBL_CATALOGO_TIPO_EQUIPO, null, valores);
         }
 
         protected void onPostExecute(Boolean result) {
             if (result)            {
                 if (Integer.parseInt(clientes_res[0][2]) == 1){
                     if(clientes_res.length == 1){
-                        Log.d("Adios", " ===>> " + (Integer.parseInt(clientes_res[0][2])));
+
+                        SQLiteDatabase db = baseDatos.getWritableDatabase();
+                        ContentValues valores = new ContentValues();
+                        valores.clear();
+                        db.execSQL("UPDATE "+ Tablas.TBL_LOGIN_USER +" SET int_select= " + 0);
+                        valores.clear();
+                        db.execSQL("UPDATE "+ Tablas.TBL_LOGIN_USER +" SET int_select= " + 1 + " WHERE _id= " + clientes_res[0][0]);
+
+                        Log.d("Adios", " ===>> " + (clientes_res[0][1]));
                         Intent i = new Intent(Activity_Login.this, Activity_Home.class);
                         startActivity(i);
                     }else {

@@ -19,6 +19,7 @@ public class HelperInventarios extends SQLiteOpenHelper {
         String TBL_CATALOGO_ALMACENES = "tbl_CatalogoAlmacenes";
         String TBL_CATALOGO_TIPO_EQUIPO = "tbl_CatalogoTipoEquipo";
         String INVENTARIO = "inventario";
+        String TBL_INVENTARIO_DIARIO = "tbl_inventario_diario";
     }
 
     public HelperInventarios(Context context) {
@@ -35,7 +36,8 @@ public class HelperInventarios extends SQLiteOpenHelper {
                         + cls_Columnas_Login_User.STR_PASS + " VARCHAR(30) NULL,"
                         + cls_Columnas_Login_User.STR_APP + " INTEGER NOT NULL,"
                         + cls_Columnas_Login_User.STR_NAME + " VARCHAR(30) NOT NULL,"
-                        + cls_Columnas_Login_User.INT_VALIDA + " INTEGER NOT NULL)");
+                        + cls_Columnas_Login_User.INT_VALIDA + " INTEGER NOT NULL,"
+                        + cls_Columnas_Login_User.INT_SELECT + " INTEGER DEFAULT 0)");
 
         db.execSQL(
                 "CREATE TABLE " + Tablas.TBL_CATALOGO_ALMACENES + "("
@@ -72,6 +74,16 @@ public class HelperInventarios extends SQLiteOpenHelper {
                         + " FOREIGN KEY (" + Inventarios.FK_EQUIPO_ALMACEN_ID + ") REFERENCES " + Tablas.TBL_CATALOGO_ALMACENES + "(" + cls_Columnas_Catalogo_Almacenes.ID_INT_EQUIPO_ALMACEN_ID + "),"
                         + " FOREIGN KEY (" + Inventarios.FK_BRANCH_ID + ") REFERENCES " + Tablas.TBL_LOGIN_USER + "(" + cls_Columnas_Login_User.ID_INT_BRANCHID + "))");
 
+        db.execSQL(
+                "CREATE TABLE " + Tablas.TBL_INVENTARIO_DIARIO + "("
+                        + cls_Columnas_Inventario_Diario.ID_INVENTARIO_DIARIO + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                        + cls_Columnas_Inventario_Diario.STR_DIVISION + " VARCHAR(30) NOT NULL,"
+                        + cls_Columnas_Inventario_Diario.STR_FECHA + " VARCHAR(30) NOT NULL,"
+                        + cls_Columnas_Inventario_Diario.STR_USER + " INTEGER NOT NULL,"
+                        + cls_Columnas_Inventario_Diario.STR_BARCODE + " INTEGER NOT NULL,"
+                        + cls_Columnas_Inventario_Diario.INT_FK_ID + " INTEGER NOT NULL,"
+                        + " FOREIGN KEY (" + cls_Columnas_Inventario_Diario.INT_FK_ID + ") REFERENCES " + Tablas.TBL_LOGIN_USER + "(" + cls_Columnas_Login_User.ID_INT_BRANCHID + "))");
+
     }
 
     @Override
@@ -81,6 +93,7 @@ public class HelperInventarios extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + Tablas.TBL_CATALOGO_TIPO_EQUIPO);
             db.execSQL("DROP TABLE IF EXISTS " + Tablas.TBL_CATALOGO_ALMACENES);
             db.execSQL("DROP TABLE IF EXISTS " + Tablas.INVENTARIO);
+            db.execSQL("DROP TABLE IF EXISTS " + Tablas.TBL_INVENTARIO_DIARIO);
         } catch (SQLiteException e) {
             // Manejo de excepciones
         }

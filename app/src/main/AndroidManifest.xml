@@ -146,7 +146,8 @@
             android:name=".client.android.history.HistoryActivity"
             android:label="@string/history_title"
             android:stateNotNeeded="true" />
-        <activity android:name=".Activity_Inventario_Diario"></activity>
+        <activity android:name=".Activity_Inventario_Diario" />
+        <activity android:name=".Activity_Consulta_Inventario_Diario"></activity>
     </application>
 
 </manifest>

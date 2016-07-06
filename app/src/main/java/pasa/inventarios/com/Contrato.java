@@ -23,6 +23,7 @@ public class Contrato {
         String STR_APP = "vch_app";
         String STR_NAME = "vch_name";
         String INT_VALIDA = "int_valida";
+        String INT_SELECT = "int_select";
     }
     interface Columnas_Catalogo_Almacenes {
         //String ID_INT_EQUIPO_ALMACEN_ID = "id_int_equipo_almacen";
@@ -52,6 +53,14 @@ public class Contrato {
         String FK_BRANCH_ID = "branch_Id";
         String EQUIPO_ALMACEN_STR = "equipo_Almacen_Str";
         String TIPO_EQUIPO_STR = "tipoEquipo";
+    }
+    interface Columnas_Inventario_Diario {
+        String ID_INVENTARIO_DIARIO = "_id";                         // Pk
+        String STR_DIVISION = "vch_division";
+        String STR_FECHA = "vch_fecha";
+        String STR_USER = "vch_user";
+        String STR_BARCODE = "vch_barcode";
+        String INT_FK_ID = "fk_id";
     }
     // Autoridad del Content Provider
     public final static String AUTORIDAD = "pasa.inventarios.com";
@@ -135,9 +144,28 @@ public class Contrato {
             return uri.getLastPathSegment();
         }
     }
+    public static class cls_Columnas_Inventario_Diario
+            implements BaseColumns, Columnas_Inventario_Diario,  ColumnasSincronizacion {
+        public static final Uri URI_CONTENIDO =
+                URI_CONTENIDO_BASE.buildUpon().appendPath(RECURSO_INVENTARIO_DIARIO).build();
+        public final static String MIME_RECURSO =
+                "vnd.android.cursor.item/vnd." + AUTORIDAD + "/" + RECURSO_INVENTARIO_DIARIO;
+        public final static String MIME_COLECCION =
+                "vnd.android.cursor.dir/vnd." + AUTORIDAD + "/" + RECURSO_INVENTARIO_DIARIO;
+        public static Uri construirUriContacto(String idContacto) {
+            return URI_CONTENIDO.buildUpon().appendPath(idContacto).build();
+        }
+        public static String generarIdContacto() {
+            return "C-" + UUID.randomUUID();
+        }
+        public static String obtenerIdContacto(Uri uri) {
+            return uri.getLastPathSegment();
+        }
+    }
     // Recursos
     public final static String RECURSO_INVENTARIO = "inventarios";
     public final static String RECURSO_LOGIN_USER = "login_user";
     public final static String RECURSO_CATALOGO_ALMACENES = "catalogo_almacenes";
     public final static String RECURSO_TIPO_EQUIPO = "tipo_equipo";
+    public final static String RECURSO_INVENTARIO_DIARIO = "tbl_inventario_diario";
 }
