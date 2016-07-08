@@ -163,9 +163,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
     if (prefs.getBoolean(PreferencesActivity.KEY_DISABLE_AUTO_ORIENTATION, true)) {
-      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-    } else {
       setRequestedOrientation(getCurrentOrientation());
+    } else {
+      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
     resetStatusView();

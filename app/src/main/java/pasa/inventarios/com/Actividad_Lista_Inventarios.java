@@ -39,6 +39,7 @@ import pasa.inventarios.com.Contrato.Inventarios;
 public class Actividad_Lista_Inventarios extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,
         AdaptadorInventarios.OnItemClickListener{
+
     private static final String TAG = Actividad_Lista_Inventarios.class.getSimpleName();
     // Referencias UI
 
@@ -50,13 +51,8 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
     Button btn_Inve1;
     ArrayList lista;
 
-    private TextView lblEtiqueta;
-    private ListView lstOpciones;
-
-    final String[] datos = new String[]{"Elem1","Elem2","Elem3","Elem4","Elem5"};
-
-
     private static Activity_Login instancia = new Activity_Login();
+
     public Activity_Login obtenerInstancia(Context contexto) {
         if (baseDatos == null) {
             baseDatos = new HelperInventarios(contexto);
@@ -69,6 +65,7 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.actividad__lista__inventarios);
+
         obtenerInstancia(getApplicationContext());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -80,7 +77,6 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 TareaWSInsertar tare = new TareaWSInsertar();
-                //tare.setReciclador(reciclador);
                 tare.execute();
                 lista = new ArrayList<String[]>();
                 for (int i = 0; i < reciclador.getChildCount(); i++) {
@@ -95,14 +91,6 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
                 }
             }
         });
-
-        ArrayAdapter<String> adaptador =
-                new ArrayAdapter<String>(this,
-                        android.R.layout.simple_list_item_1, datos);
-
-        lstOpciones = (ListView)findViewById(R.id.LstOpciones);
-
-        lstOpciones.setAdapter(adaptador);
 
         if (reciclador.getChildCount() > 0) {
             Log.e("PreparaBotones", "=========" + reciclador.getChildCount());

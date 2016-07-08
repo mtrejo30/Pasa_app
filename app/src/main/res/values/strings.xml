@@ -115,6 +115,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="division_consulta_inventario_diario">División</string>
+    <string name="Fecha_consulta_inventario_diario">Fecha</string>
 
 
 </resources>

@@ -17,22 +17,76 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
-
     <LinearLayout
-        android:layout_marginTop="70dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:id="@+id/lin_Btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="120sp"
+            android:text="@string/division_consulta_inventario_diario"
+            android:textSize="12sp"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="100sp"
+            android:text="@string/Fecha_consulta_inventario_diario"
+            android:textSize="12sp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_marginTop="90dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="120sp"
+            android:text="@string/division_consulta_inventario_diario"
+            android:textColor="@color/contents_text"
+            android:textSize="16sp"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:layout_width="100sp"
+            android:textSize="20sp"
+            android:layout_marginLeft="10sp"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_search_black_24dp"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="135dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:id="@+id/lin_Btn"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
         <Button
-            android:id="@+id/btn_Inve"
+            android:id="@+id/btn_Sincronizacion"
             android:layout_width="fill_parent"
             android:background="@color/colorPrimary"
             android:layout_height="wrap_content"
             android:text="Sincronizar"/>
-
     </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_marginTop="190dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/lin_AddEditTextEscaner"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </ScrollView>
+    <!--
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_marginTop="130dp"
@@ -40,9 +94,7 @@
         <ListView android:id="@+id/LstOpciones"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
     </LinearLayout>
-
-
+    -->
     <!--<include layout="@layout/contenido_actividad_lista"/>-->
 </android.support.design.widget.CoordinatorLayout>
