@@ -1,11 +1,17 @@
 package pasa.inventarios.com;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
@@ -20,6 +26,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -39,6 +47,7 @@ public class Activity_Login extends AppCompatActivity
                                             LoaderManager.LoaderCallbacks<Cursor> {
     private ListView lstClientes;
     EditText txt_User;
+    CheckBox chrecuerdame;
     EditText txt_Pass;
     private String[] clientes;
     SQLiteDatabase db;
@@ -51,6 +60,10 @@ public class Activity_Login extends AppCompatActivity
     DbDataSource dataSource;
     private Uri uriContacto;
     HelperInventarios baseDatos;
+    public String _msje = "";
+    ProgressDialog pDialog;
+    _VariablesPublicas _variables = new _VariablesPublicas();
+    private String MensajeError = "Datos Incorrectos";
 
     private static Activity_Login instancia = new Activity_Login();
 
@@ -64,14 +77,37 @@ public class Activity_Login extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity__login);
 
+        SharedPreferences prefs = getSharedPreferences("sesion", Context.MODE_PRIVATE);
+        _variables.usuario  = prefs.getString("user", "");
+        _variables.pass = prefs.getString("pass", "");
+        if (prefs.getString("user","").length()>0)
+        {
+            Intent i = new Intent(Activity_Login.this,Activity_Home.class);
+            startActivity(i);
+            //finish();
+        }
+
+        setContentView(R.layout.activity__login);
         obtenerInstancia(getApplicationContext());
 
         Button btn_Access = (Button) findViewById(R.id.btnAceptar);
         btn_Access.setOnClickListener(this);
+        chrecuerdame=(CheckBox) findViewById(R.id.checkBox);
         txt_User = (EditText) findViewById(R.id.idtUsuario);
         txt_Pass = (EditText) findViewById(R.id.editText);
+
+        chrecuerdame.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                SharedPreferences prefs= getSharedPreferences("sesion",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("user", txt_User.getText().toString());
+                editor.putString("pass", txt_Pass.getText().toString());
+                editor.commit();
+            }
+        });
 
         dataSource = new DbDataSource(this);
 
@@ -88,8 +124,15 @@ public class Activity_Login extends AppCompatActivity
 
             if(!txt_User.getText().toString().equals("") & !txt_Pass.getText().toString().equals("")) {
 
-                TareaWSListarUser tarea = new TareaWSListarUser();
-                tarea.execute();
+                /*  Inicio validacion del internet    */
+                if(!estaConectado()) {
+                }
+                else {
+                    TareaWSListarUser tarea = new TareaWSListarUser();
+                    tarea.execute();
+                }
+                /*  Fin validacion del internet    */
+
             }else {
                 Toast.makeText(getApplicationContext(),
                         "No deje los campos vacios", Toast.LENGTH_SHORT).show();
@@ -123,6 +166,20 @@ public class Activity_Login extends AppCompatActivity
     private class TareaWSListarUser extends AsyncTask<String,Integer,Boolean> {
         String a = txt_User.getText().toString();
         String b = txt_Pass.getText().toString();
+
+
+        protected void onPreExecute() {
+
+            /*  Inicio validacion del internet    */
+            pDialog = new ProgressDialog(Activity_Login.this);
+            pDialog.setMessage("Autenticando...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
+            /*  Fin validacion del internet    */
+        }
+
+
         protected Boolean doInBackground(String... params) {
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpGet del =
@@ -394,6 +451,12 @@ public class Activity_Login extends AppCompatActivity
                 if (Integer.parseInt(clientes_res[0][2]) == 1){
                     if(clientes_res.length == 1){
 
+                        /*  Inicio validacion del internet    */
+                        txt_Pass.setText("");
+                        txt_User.setText("");
+                        pDialog.cancel();
+                        /*  Fin validacion del internet    */
+
                         SQLiteDatabase db = baseDatos.getWritableDatabase();
                         ContentValues valores = new ContentValues();
                         valores.clear();
@@ -405,6 +468,14 @@ public class Activity_Login extends AppCompatActivity
                         Intent i = new Intent(Activity_Login.this, Activity_Home.class);
                         startActivity(i);
                     }else {
+                        /*  Inicio validacion del internet    */
+                        txt_Pass.setText("");
+                        txt_User.setText("");
+                        pDialog.cancel();
+                        /*  Fin validacion del internet    */
+
+                        //pDialog.hide();
+                        //pDialog.dismiss();
                         Log.d("Adios", " ===>> " + (Integer.parseInt(clientes_res[0][2])));
                         Intent i = new Intent(Activity_Login.this, Activity_Division.class);
                         startActivity(i);
@@ -423,4 +494,67 @@ public class Activity_Login extends AppCompatActivity
             }
         }
     }
+
+    /*  Inicio validacion del internet    */
+    protected Boolean estaConectado(){
+        if(conectadoWifi()){
+            return true;
+        }else{
+            if(conectadoRedMovil()){
+                return true;
+            }else{
+                showAlertDialog(this, "Error de Inicio de Sesión",
+                        "Tu Dispositivo no tiene Conexión a Internet.", false);
+                return false;
+            }
+        }
+    }
+    /*  Fin validacion del internet    */
+
+    /*  Inicio validacion del internet    */
+    protected Boolean conectadoWifi(){
+        ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo info = connectivity.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            if (info != null) {
+                if (info.isConnected()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    /*  Fin validacion del internet    */
+
+    /*  Inicio validacion del internet    */
+    protected Boolean conectadoRedMovil(){
+        ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo info = connectivity.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if (info != null) {
+                if (info.isConnected()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    /*  Fin validacion del internet    */
+
+    /*  Inicio validacion del internet    */
+    public void showAlertDialog(Context context, String title, String message, Boolean status) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        alertDialog.setTitle(title);
+
+        alertDialog.setMessage(message);
+
+        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        alertDialog.show();
+    }
+    /*  Fin validacion del internet    */
 }

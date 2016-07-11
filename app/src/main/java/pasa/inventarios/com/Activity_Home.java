@@ -1,6 +1,8 @@
 package pasa.inventarios.com;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.view.GravityCompat;
@@ -11,6 +13,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class Activity_Home extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
 
@@ -85,11 +88,45 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
 
         int id = item.getItemId();
 
-
         if (id == R.id.nav_perfil) {
+            Intent i = new Intent(Activity_Home.this,Activity_Home.class);
+            startActivity(i);
         }
 
+        if (id == R.id.nav_Agregar) {
+            Intent i = new Intent(Activity_Home.this,Activity_AddData.class);
+            startActivity(i);
+        }
 
+        if (id == R.id.nav_InventarioDiario) {
+            Intent i = new Intent(Activity_Home.this,Activity_Inventario_Diario.class);
+            startActivity(i);
+        }
+
+        if (id == R.id.nav_ConsultaInventarioDiario) {
+            Intent i = new Intent(Activity_Home.this,Activity_Consulta_Inventario_Diario.class);
+            startActivity(i);
+        }
+
+        if (id == R.id.nav_Sincronizar) {
+            Intent i = new Intent(Activity_Home.this,Actividad_Lista_Inventarios.class);
+            startActivity(i);
+        }
+
+        if (id == R.id.nav_Salir) {
+
+            Toast.makeText(getApplicationContext(), "Hola", Toast.LENGTH_SHORT).show();
+
+            SharedPreferences preferences = getSharedPreferences("sesion", 0);
+            preferences.edit().remove("user").commit();
+            preferences.edit().remove("pass").commit();
+
+            //this.finish();
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

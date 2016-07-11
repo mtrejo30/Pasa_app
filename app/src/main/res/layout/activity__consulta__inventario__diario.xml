@@ -45,6 +45,7 @@
         android:layout_height="wrap_content">
         <TextView
             android:layout_width="120sp"
+            android:id="@+id/txtView_Division"
             android:text="@string/division_consulta_inventario_diario"
             android:textColor="@color/contents_text"
             android:textSize="16sp"
@@ -52,6 +53,7 @@
         <EditText
             android:layout_width="100sp"
             android:textSize="20sp"
+            android:id="@+id/editText_Fecha"
             android:layout_marginLeft="10sp"
             android:layout_height="wrap_content" />
         <ImageButton

@@ -1,4 +1,5 @@
 package pasa.inventarios.com;
+import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,11 +9,14 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,10 +29,16 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
-public class Activity_Consulta_Inventario_Diario extends AppCompatActivity {
+
+public class Activity_Consulta_Inventario_Diario extends AppCompatActivity implements View.OnClickListener {
 
     String str_id = "";
+    TextView str_divisionTV;
+    EditText str_fechaET;
     String str_division = "";
     String str_fecha = "";
     String str_user = "";
@@ -41,6 +51,8 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity {
     Button btn_Sincronizar;
     LinearLayout container;
     boolean result = false;
+    private DatePickerDialog fromDatePickerDialog;
+    private SimpleDateFormat dateFormatter;
     private AdaptadorInventarios adaptador;
 
     HelperInventarios baseDatos;
@@ -64,11 +76,20 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity {
         setSupportActionBar(toolbar);
         setTitle(R.string.titulo_actividad_actividad_listar);
         container = (LinearLayout) findViewById(R.id.lin_AddEditTextEscaner);
+        str_divisionTV = (TextView) findViewById(R.id.txtView_Division);
+
+        dateFormatter = new SimpleDateFormat("dd/MMMM/yyyy", Locale.US);
+        str_fechaET = (EditText) findViewById(R.id.editText_Fecha);
+        str_fechaET.setInputType(InputType.TYPE_NULL);
+        str_fechaET.requestFocus();
+        str_fechaET.setOnClickListener(this);
+        setDateTimeField();
         finalContainer = container;
         if(finalContainer.getChildCount()!= 0) {
             finalContainer.removeAllViews();
         }
         prepararLista();
+
         btn_Sincronizar = (Button) findViewById(R.id.btn_Sincronizacion);
         btn_Sincronizar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +99,20 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity {
                 tare.execute();
             }
         });
+    }
+
+    private void setDateTimeField() {
+        str_fechaET.setOnClickListener(this);
+        Calendar newCalendar = Calendar.getInstance();
+        fromDatePickerDialog = new DatePickerDialog(Activity_Consulta_Inventario_Diario.this, new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                str_fechaET.setText(dateFormatter.format(newDate.getTime()));
+            }
+
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
     }
 
     private void prepararLista() {
@@ -100,10 +135,18 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity {
                 txtViewSub = (TextView) addView.findViewById(R.id.LblSubTitulo);
                 txtViewSub.setText(str_user);
                 finalContainer.addView(addView);
+                str_divisionTV.setText(c.getString(1));
             } while (c.moveToNext());
         } else {
             Toast.makeText(getApplicationContext(), "No hay datos", Toast.LENGTH_SHORT);
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+
+            fromDatePickerDialog.show();
+
     }
 
     private class TareaWSInsertar extends AsyncTask<String,Integer,Boolean> {

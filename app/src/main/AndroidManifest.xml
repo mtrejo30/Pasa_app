@@ -79,7 +79,7 @@
 
         <activity
             android:name=".client.android.CaptureActivity"
-            android:configChanges="screenSize|orientation">
+            android:configChanges="screenSize|orientation" >
 
             <!--
             <intent-filter>
