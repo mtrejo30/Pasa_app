@@ -49,6 +49,12 @@ import java.util.Objects;
 public class Activity_AddData extends AppCompatActivity
         implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
                                             LoaderManager.LoaderCallbacks<Cursor>   {
+
+    Button btn_AddEditText;
+    TextView txtViewTit;
+    TextView txtViewSub;
+    EditText editText_Barcode;
+
     Spinner spn_TipoEquipo;
     Spinner spn_Almacen;
     Button btn_Escanear;
@@ -66,7 +72,7 @@ public class Activity_AddData extends AppCompatActivity
     EditText txt_Cantidad;
     LinearLayout container;
     View addView;
-    ViewGroup finalContainer;
+    ViewGroup finalContainer = null;
     SimpleCursorAdapter genreSpinnerAdapter1;
     SimpleCursorAdapter genreSpinnerAdapter2;
     DbDataSource dataSource;
@@ -94,21 +100,8 @@ public class Activity_AddData extends AppCompatActivity
 
         if(resultCode==RESULT_OK){
             _Codigo = data.getStringExtra("id_codigo");
-            //Log.e("Codigo==========>", " -RESULtttttttttt===============>>> " + _Codigo);
-
-            View view = finalContainer.getChildAt(cont[0] - 1);
-            String str = "";
-            if (view instanceof RelativeLayout) {
-                View editText = (View) ((RelativeLayout) view).getChildAt(0);
-                EditText editText1 = (EditText) editText;
-                editText1.setText(_Codigo);
-                if(_Codigo == "")
-                {
-                    contador = contador + 1;
-                }
-                //Log.e("", " =======>>>>>>> " + editText1 + " =======>>>>>>" + contador);
-            }
-
+            Log.e("", "==========>>>>>>>>> " + _Codigo);
+            editText_Barcode.setText(_Codigo);
         }
     }
 
@@ -141,6 +134,7 @@ public class Activity_AddData extends AppCompatActivity
             uriContacto = Uri.parse(uri);
             getSupportLoaderManager().restartLoader(1, null, this);
         }
+        editText_Barcode = (EditText) findViewById(R.id.editText_BarcodeEscaner);
 
         spn_TipoEquipo = (Spinner) findViewById(R.id.spn_TipoEquipo);
         genreSpinnerAdapter1 = new SimpleCursorAdapter(
@@ -201,12 +195,14 @@ public class Activity_AddData extends AppCompatActivity
             }
         });
         // //////////////////////////////////////////////////////////////////
-        txt_Cantidad = (EditText) findViewById(R.id.edit_Cantidad);
+        //txt_Cantidad = (EditText) findViewById(R.id.edit_Cantidad);
         container = (LinearLayout) findViewById(R.id.lin_AddEditTextEscaner);
         finalContainer = container;
+
+        prepararLista();
+        /*
         btn_Add = (Button) findViewById(R.id.btn_AgregarCajas);
         btn_Add.setEnabled(true);
-        /*btn_Add.setOnClickListener(this);*/
         btn_Add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -223,7 +219,6 @@ public class Activity_AddData extends AppCompatActivity
                     }
                     btn_Escanear.setEnabled(true);
                     btn_Escanear.setBackgroundColor(Color.parseColor("#017A42"));
-
                 } else {
                     Toast.makeText(v.getContext(),
                             "No deje el campo vacío", Toast.LENGTH_SHORT).show();
@@ -231,7 +226,8 @@ public class Activity_AddData extends AppCompatActivity
                 }
             }
         });
-
+        */
+        /*
         btn_Save = (Button) findViewById(R.id.btn_Save);
         btn_Save.setEnabled(false);
         btn_Save.setBackgroundColor(Color.parseColor("#60000000"));
@@ -274,6 +270,46 @@ public class Activity_AddData extends AppCompatActivity
                 }
             }
         });
+        */
+
+        btn_AddEditText = (Button) findViewById(R.id.btn_AddEditText);
+        btn_AddEditText.setEnabled(true);
+        btn_AddEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (spn_TipoEquipo.getSelectedItemPosition() != 0) {
+                    if (spn_Almacen.getSelectedItemPosition() != 0) {
+                        if (!editText_Barcode.getText().toString().equals("")) {
+                            mtd_insert(editText_Barcode.getText().toString().trim());
+                            prepararLista();
+                            editText_Barcode.setText("");
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "La caja del código de barras esta vacía", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Elije un almacén", Toast.LENGTH_SHORT).show();
+                        spn_Almacen.requestFocus();
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Elije un equipo", Toast.LENGTH_SHORT).show();
+                    spn_TipoEquipo.requestFocus();
+                }
+
+            }
+        });
+
+
+        btn_Escanear = (Button) findViewById(R.id.btn_Escanear);
+        btn_Escanear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Activity_AddData.this, CaptureActivity.class);
+                startActivityForResult(i,Resultado);
+            }
+        });
+
+        /*
         btn_Escanear = (Button) findViewById(R.id.btn_Escanear);
         btn_Escanear.setEnabled(false);
         btn_Escanear.setBackgroundColor(Color.parseColor("#60000000"));
@@ -301,8 +337,51 @@ public class Activity_AddData extends AppCompatActivity
                     }
                 }
             }
-        });
+        });*/
     }
+
+    private void mtd_insert(String str_bar_code) {
+        SQLiteDatabase db = baseDatos.getWritableDatabase();
+        ContentValues valores = new ContentValues();
+        valores.clear();
+        valores.put(Inventarios.EQUIPO_FOLIO, str_bar_code);
+        valores.put(Inventarios.EQUIPO_RFID, 0);
+        valores.put(Inventarios.FK_TIPO_EQUIPO_ID, id_Tipo_Equipo);
+        valores.put(Inventarios.FK_EQUIPO_ALMACEN_ID, id_Equipo_Almacen);
+        valores.put(Inventarios.EQUIPO_ESTATUS_ID, 1);
+        valores.put(Inventarios.EQUIPO_PROPIO, 0);
+        valores.put(Inventarios.FK_BRANCH_ID, id_Branch);
+        valores.put(Inventarios.EQUIPO_ALMACEN_STR, str_Equipo_Almacen);
+        valores.put(Inventarios.TIPO_EQUIPO_STR, str_Tipo_Equipo);
+        db.insertOrThrow(Tablas.INVENTARIO, null, valores);
+    }
+    private void prepararLista() {
+        Log.e("=========>>>>>>>>", "  Soy el metodo prepararLista - Inventario Diario");
+        SQLiteDatabase db = baseDatos.getWritableDatabase();
+        Cursor c = db.rawQuery("Select * from " + Tablas.INVENTARIO, null);
+        finalContainer.removeAllViews();
+        if (c.moveToFirst()) {
+            do {
+                /*str_id = c.getString(0);
+                str_division = c.getString(1);
+                str_fecha = c.getString(2);
+                str_user = c.getString(3);
+                str_barcode = c.getString(4);
+                str_branch = c.getString(5);*/
+                Log.e("", "==>>     " + c.getString(0) + "--" + c.getString(1) + "--" + c.getString(2) + "--" + c.getString(3) + "--" + c.getString(4) + "--" + c.getString(6) + "--" + c.getString(7) + "--" + c.getString(8));
+                LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                addView = layoutInflater.inflate(R.layout.listitem_titular, null);
+                txtViewTit = (TextView) addView.findViewById(R.id.LblTitulo);
+                txtViewTit.setText(c.getString(1));
+                txtViewSub = (TextView) addView.findViewById(R.id.LblSubTitulo);
+                txtViewSub.setText(c.getString(7) + " -- " + c.getString(8) + " -- " + c.getString(9));
+                finalContainer.addView(addView);
+            } while (c.moveToNext());
+        } else {
+            Toast.makeText(getApplicationContext(), "No hay datos", Toast.LENGTH_SHORT);
+        }
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -398,6 +477,7 @@ public class Activity_AddData extends AppCompatActivity
             this.resolver = resolver;
             this.valores = valores;
         }
+
         @Override
         protected Void doInBackground(Uri... args) {
             Uri uri = args[0];

@@ -19,40 +19,40 @@
     </android.support.design.widget.AppBarLayout>
     <LinearLayout
         android:layout_marginTop="75dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:id="@+id/lin_Btn"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="120sp"
+            android:layout_width="160sp"
             android:text="@string/division_consulta_inventario_diario"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:layout_height="wrap_content" />
         <TextView
-            android:layout_width="100sp"
+            android:layout_width="110sp"
             android:text="@string/Fecha_consulta_inventario_diario"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10sp" />
+            android:layout_marginLeft="13sp" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_marginTop="90dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_height="wrap_content">
         <TextView
-            android:layout_width="120sp"
+            android:layout_width="160sp"
             android:id="@+id/txtView_Division"
             android:text="@string/division_consulta_inventario_diario"
             android:textColor="@color/contents_text"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:layout_height="wrap_content" />
         <EditText
-            android:layout_width="100sp"
-            android:textSize="20sp"
+            android:layout_width="110sp"
+            android:textSize="15sp"
             android:id="@+id/editText_Fecha"
             android:layout_marginLeft="10sp"
             android:layout_height="wrap_content" />
@@ -62,9 +62,9 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout
-        android:layout_marginTop="135dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
+        android:layout_marginTop="155dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:id="@+id/lin_Btn"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
@@ -77,9 +77,9 @@
     </LinearLayout>
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_marginTop="190dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
+        android:layout_marginTop="210dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
@@ -98,5 +98,5 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
     -->
-    <!--<include layout="@layout/contenido_actividad_lista"/>-->
+    <!-- <include layout="@layout/contenido_actividad_lista"/> -->
 </android.support.design.widget.CoordinatorLayout>

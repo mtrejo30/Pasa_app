@@ -99,21 +99,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5sp"
-                android:drawableTop="@drawable/ic_save_white_48dp"
-                android:id="@+id/btn_Save"
+                android:drawableTop="@drawable/ic_add_box_white_48dp"
+                android:id="@+id/btn_AddEditText"
                 android:textColor="@color/colorPrimaryT"
                 android:background="@color/colorPrimary"
                 android:layout_marginLeft="5sp" />
         </LinearLayout>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_marginTop="10sp"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_AddEditText"
-            android:drawableTop="@drawable/ic_add_box_white_48dp"
-            android:textColor="@color/colorPrimaryT"
-            android:background="@color/colorPrimary" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -122,8 +113,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_marginLeft="35dp"
-                android:layout_marginRight="35dp"
                 android:id="@+id/lin_AddEditTextEscaner"
                 android:orientation="vertical" >
             </LinearLayout>

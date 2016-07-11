@@ -88,6 +88,7 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
         if(finalContainer.getChildCount()!= 0) {
             finalContainer.removeAllViews();
         }
+        mtd_Query_Tbl_Login_User();
         prepararLista();
 
         btn_Sincronizar = (Button) findViewById(R.id.btn_Sincronizacion);
@@ -97,8 +98,32 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
 
                 TareaWSInsertar tare = new TareaWSInsertar();
                 tare.execute();
+                prepararLista();
             }
         });
+    }
+
+    public void mtd_Query_Tbl_Login_User(){
+        Log.e("=========>>>>>>>>", "  Soy el metodo mtd_Query_Tbl_Login_User");
+        SQLiteDatabase db = baseDatos.getWritableDatabase();
+        Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_LOGIN_USER+ " where int_select = 1", null);
+        if (c.moveToFirst()) {
+            String str_pass = "";
+            String str_app = "";
+            String str_valida = "";
+            String str_bandera = "";
+            do {
+                str_branch= c.getString(0);
+                str_user = c.getString(1);
+                str_pass = c.getString(2);
+                str_app = c.getString(3);
+                str_division = c.getString(4);
+                str_valida = c.getString(5);
+                str_bandera = c.getString(6);
+                Log.e("", "==>>     " + str_branch + "--" + str_user + "--" + str_pass + "--" + str_app + "--" + str_division + "--" + str_valida + "--" + str_bandera);
+                str_divisionTV.setText(str_division);
+            } while(c.moveToNext());
+        }
     }
 
     private void setDateTimeField() {
@@ -117,6 +142,7 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
 
     private void prepararLista() {
         Log.e("=========>>>>>>>>", "  Soy el metodo prepararLista - Inventario Diario");
+        finalContainer.removeAllViews();
         SQLiteDatabase db = baseDatos.getWritableDatabase();
         Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO, null);
         if (c.moveToFirst()) {
@@ -144,9 +170,7 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
 
     @Override
     public void onClick(View v) {
-
             fromDatePickerDialog.show();
-
     }
 
     private class TareaWSInsertar extends AsyncTask<String,Integer,Boolean> {
@@ -156,7 +180,6 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
             HttpPost post = new HttpPost("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/altaEquiposInsertReporte");
             post.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials("adminLogistica", "Pasa123!"), "UTF-8", false));
             try {
-
                 Log.e("=========>>>>>>>>", "  Soy el metodo TareaWSInsertar - Inventario Diario");
                 SQLiteDatabase db = baseDatos.getWritableDatabase();
                 Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO, null);
@@ -165,6 +188,7 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
                     addView = layoutInflater.inflate(R.layout.listitem_titular, null);
                     JSONObject object = new JSONObject();
                     ContentValues valores = new ContentValues();
+                    HttpResponse resp;
                     do {
                         str_id = c.getString(0);
                         str_division = c.getString(1);
@@ -172,30 +196,45 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
                         str_user = c.getString(3);
                         str_barcode = c.getString(4);
                         str_branch = c.getString(5);
-                        Log.e("", "==>>     " + str_id + "--" + str_division + "--" + str_fecha + "--" + str_user + "--" + str_barcode + "--" + str_branch + "--" + c.getCount());
+                        Log.e("Muestra", "==>>     " + str_id + "--" + str_division + "--" + str_fecha + "--" + str_user + "--" + str_barcode + "--" + str_branch + "--" + c.getCount());
                         ////////////////////////////////////////////////
-                            object.put("equipoFolio", str_barcode);
-                            object.put("branchId", str_branch);
-                            object.put("user", str_user);
-                            message = object.toString();
-                            post.setEntity(new StringEntity(message, "UTF8"));
-                            post.setHeader("Content-type", "application/json");
-                            HttpResponse resp = httpClient.execute(post);
-                            if (resp != null) {
-                                if (resp.getStatusLine().getStatusCode() == 204)
-                                    result = true;
+                        object.put("equipoFolio", str_barcode.trim());
+                        object.put("branchId", str_branch.trim());
+                        object.put("user", str_user.trim());
+                        message = object.toString();
+                        post.setEntity(new StringEntity(message, "UTF8"));
+                        post.setHeader("Content-type", "application/json");
+                        resp = httpClient.execute(post);
+                        if (resp != null) {
+                            if (resp.getStatusLine().getStatusCode() == 204) {
+                                result = true;
+                                Log.e("=====>>>>>", " Soy IF ");
+                            } else {
+                                Log.e("=====>>>>>", " Soy ELSE " + resp.getStatusLine().getStatusCode());
                             }
-                            String[] args = new String[]{str_id};
-                            db.execSQL("DELETE FROM tbl_inventario_diario WHERE _id=?", args);
-                            String respuesta =  EntityUtils.toString(resp.getEntity());
-                            showToast(respuesta);
+                        }
+                        String respuesta = "Respuesta default";
+                        respuesta = EntityUtils.toString(resp.getEntity());
+                        //showToast(respuesta);
+                        String [] str_validar_msj = respuesta.split(" ");
+                        String str_last = str_validar_msj[str_validar_msj.length - 1];
+                        str_last = str_last.substring(1, str_last.length()-2);
+                        Log.d("", " =====>>>>> " + str_last);
+
+                        String[] args = new String[]{str_id};
+                        db.execSQL("DELETE FROM tbl_inventario_diario WHERE _id=?", args);
+
+                        Log.e("getEntity.getContent", "=====>>>>> " + respuesta);
+                        Log.e("Status", "=====>>>>> " + resp.getStatusLine().getStatusCode());
+                        Log.e("Status message", "=====>>>>>" + message);
+                        Log.e("resp.getStatusLine", "=====>>>>>" + resp.getStatusLine().toString());
                         result = true;
-                        ////////////////////////////////////////////////
                     } while (c.moveToNext());
                 } else {
                     Toast.makeText(getApplicationContext(), "No hay datos", Toast.LENGTH_SHORT);
                 }
             } catch (Exception ex) {
+                Log.e("ServicioRest", "Error=============>>>>!", ex);
                 Log.d("TareaWSInsertar: ", "catch(Exception ex)");
                 result = false;
             }
@@ -211,19 +250,14 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
                     Toast.makeText(Activity_Consulta_Inventario_Diario.this, finalToast, Toast.LENGTH_SHORT).show();
                 }
             });
-
         }
-
         protected void onPostExecute(Boolean result) {
             if (result) {
                 Log.e("onPostExecute", "=========" + finalContainer.getChildCount());
                 btn_Sincronizar.setBackgroundColor(Color.parseColor("#60000000"));
                 btn_Sincronizar.setEnabled(false);
-                prepararLista();
             }
             prepararLista();
-            finalContainer.removeAllViews();
         }
     }
-
 }

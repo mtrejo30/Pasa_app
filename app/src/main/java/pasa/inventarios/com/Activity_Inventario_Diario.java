@@ -46,6 +46,8 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
     final int Resultado=1;
     Button btn_Save;
     HelperInventarios baseDatos;
+    TextView txtViewTit;
+    TextView txtViewSub;
 
     String str_branch = "";
     String str_user = "";
@@ -92,7 +94,7 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
         finalContainer = container;
 
         editText_Barcode = (EditText) findViewById(R.id.editText_BarcodeEscaner);
-
+        prepararLista();
         mtd_Query_Tbl_Login_User();
 
         btn_Escanear = (Button) findViewById(R.id.btn_Escanear);
@@ -110,38 +112,19 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
             @Override
             public void onClick(View v) {
                 if (!editText_Barcode.getText().toString().equals("")) {
-                    LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    /*LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     addView = layoutInflater.inflate(R.layout.fragment__row2, null);
                     txtViewRow = (TextView) addView.findViewById(R.id.editext_BarCode);
                     txtViewRow.setText(editText_Barcode.getText().toString());
                     finalContainer.addView(addView);
+                    editText_Barcode.setText("");*/
+                    mtd_insert(editText_Barcode.getText().toString().trim());
+                    prepararLista();
                     editText_Barcode.setText("");
                 }
                 else{
                     Toast.makeText(getApplicationContext(), "La caja del código de barras esta vacía", Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-
-        btn_Save = (Button) findViewById(R.id.btn_Save);
-        btn_Save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*
-                Log.e("==========>>>>>>>", " Boton Save OnClickListener");
-                Log.e("==========>>>>>>>", " Boton Save OnClickListener " + finalContainer.getChildCount());
-                for (int i = 0; i < finalContainer.getChildCount(); i++) {
-                    View view = finalContainer.getChildAt(i);
-                    if (view instanceof RelativeLayout) {
-                        View editText = (View) ((RelativeLayout) view).getChildAt(0);
-                        EditText editText1 = (EditText) editText;
-                        Log.e("", "========>>>>>>>" + editText1);
-                    }
-                }
-                */
-                insertar(finalContainer);
-                finalContainer.removeAllViews();
-
             }
         });
 
@@ -156,7 +139,47 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
+    private void prepararLista() {
+        Log.e("=========>>>>>>>>", "  Soy el metodo prepararLista - Inventario Diario");
+        SQLiteDatabase db = baseDatos.getWritableDatabase();
+        Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO, null);
+        finalContainer.removeAllViews();
+        if (c.moveToFirst()) {
+            do {
+                /*str_id = c.getString(0);
+                str_division = c.getString(1);
+                str_fecha = c.getString(2);
+                str_user = c.getString(3);
+                str_barcode = c.getString(4);
+                str_branch = c.getString(5);*/
+                Log.e("", "==>>     " + c.getString(0) + "--" + c.getString(1) + "--" + c.getString(2) + "--" + c.getString(3) + "--" + c.getString(4) + "--" + c.getString(5));
+                LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                addView = layoutInflater.inflate(R.layout.listitem_titular, null);
+                txtViewTit = (TextView) addView.findViewById(R.id.LblTitulo);
+                txtViewTit.setText(c.getString(4));
+                txtViewSub = (TextView) addView.findViewById(R.id.LblSubTitulo);
+                txtViewSub.setText(c.getString(2) + " -- " + c.getString(3));
+                finalContainer.addView(addView);
+            } while (c.moveToNext());
+        } else {
+            Toast.makeText(getApplicationContext(), "No hay datos", Toast.LENGTH_SHORT);
+        }
+    }
 
+    private void mtd_insert(String str_bar_code) {
+            Log.e("", "==>>     " + "--" + str_division + "--"+ txtView_Fecha.getText().toString() + "--" + str_user + "--" + str_bar_code + "--" + str_branch);
+
+            SQLiteDatabase db = baseDatos.getWritableDatabase();
+            ContentValues valores = new ContentValues();
+            valores.clear();
+            //valores.put(cls_Columnas_Inventario_Diario.ID_INVENTARIO_DIARIO, );
+            valores.put(cls_Columnas_Inventario_Diario.STR_DIVISION, str_division);
+            valores.put(cls_Columnas_Inventario_Diario.STR_FECHA, txtView_Fecha.getText().toString());
+            valores.put(cls_Columnas_Inventario_Diario.STR_USER, str_user);
+            valores.put(cls_Columnas_Inventario_Diario.STR_BARCODE, str_bar_code);
+            valores.put(cls_Columnas_Inventario_Diario.INT_FK_ID, str_branch);
+            db.insertOrThrow(HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO, null, valores);
+    }
     private void insertar(ViewGroup finalContainer) {
         for(int i = 0; i < finalContainer.getChildCount(); i++){
             View view = finalContainer.getChildAt(i);
@@ -204,25 +227,6 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
 
                 txtView_Division.setText(str_division);
 
-            } while(c.moveToNext());
-        }
-    }
-
-    public void mtd_Query_Tbl_Inventario_Diario(){
-        Log.e("=========>>>>>>>>", "  Soy el metodo mtd_Query_Tbl_Inventario_Diario");
-        SQLiteDatabase db = baseDatos.getWritableDatabase();
-        Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO, null);
-
-        if (c.moveToFirst()) {
-            //Recorremos el cursor hasta que no haya más registros
-            do {
-                str_branch= c.getString(0);
-                str_user = c.getString(1);
-                str_pass = c.getString(2);
-                str_app = c.getString(3);
-                str_division = c.getString(4);
-                str_valida = c.getString(5);
-                Log.e("", "==>>     " + str_branch + "--" + str_user + "--" + str_pass + "--" + str_app + "--" + str_division + "--" + str_valida + "--" + str_bandera);
             } while(c.moveToNext());
         }
     }

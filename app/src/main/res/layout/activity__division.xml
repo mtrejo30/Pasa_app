@@ -16,8 +16,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Selecciona una división"
+        android:text="@string/selecciona_una_division"
         android:textSize="20sp"
+        android:gravity="center_horizontal"
         android:textColor="@color/colorPrimary"
         android:layout_marginTop="100dp"/>
 
@@ -29,7 +30,8 @@
         android:prompt="@string/prompt_Division"
         android:spinnerMode="dialog"
         android:layout_marginTop="150dp"
-        android:layout_marginLeft="0dp">
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp">
 
     </Spinner>
 </RelativeLayout>

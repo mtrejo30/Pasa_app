@@ -10,16 +10,19 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="25dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_marginTop="80dp"
         android:layout_marginRight="25dp"
         android:layout_marginLeft="25dp">
         <Button
             android:layout_width="140dp"
             android:layout_height="120dp"
-            android:layout_marginTop="80dp"
             android:text="Escaneo Equipo Diario"
             android:id="@+id/btn_AgregarDatos"
             android:drawableTop="@drawable/ic_add_box_black_48dp"
@@ -27,7 +30,6 @@
         <Button
             android:layout_width="140dp"
             android:layout_height="120dp"
-            android:layout_marginTop="80dp"
             android:text="Inventario Diario"
             android:drawableTop="@drawable/ic_local_see_black_48dp"
             android:id="@+id/btn_InventarioDiario"
@@ -35,12 +37,11 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_marginLeft="25dp"
-        android:layout_marginTop="50dp"
         android:gravity="center"
         android:layout_marginRight="25dp"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
         <Button
             android:layout_width="140dp"
             android:layout_height="120dp"
@@ -57,6 +58,7 @@
             android:id="@+id/btn_Sincronizacion"
             android:layout_gravity="right|center_vertical" />
 
+    </LinearLayout>
     </LinearLayout>
 
     <include
