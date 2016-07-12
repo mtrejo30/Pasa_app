@@ -30,11 +30,14 @@ import java.util.Calendar;
 import pasa.inventarios.com.client.android.CaptureActivity;
 import pasa.inventarios.com.Contrato.*;
 
-public class Activity_Inventario_Diario extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener{
+public class Activity_Inventario_Diario extends AppCompatActivity
+        implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener{
 
     TextView txtView_Fecha;
     TextView txtView_Division;
     Button btn_AddEditText;
+    Button btn_delete_item;
+    Button btn_buscar;
     LinearLayout container;
     View addView;
     ViewGroup finalContainer = null;
@@ -86,6 +89,7 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
         SimpleDateFormat df = new SimpleDateFormat("dd/MMMM/yyyy");
         String formattedDate = df.format(c.getTime());
         txtView_Fecha = (TextView) findViewById(R.id.txtView_Fecha);
+        //assert txtView_Fecha != null;
         txtView_Fecha.setText(formattedDate);
 
         txtView_Division = (TextView) findViewById(R.id.txtView_Division);
@@ -112,7 +116,8 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
             @Override
             public void onClick(View v) {
                 if (!editText_Barcode.getText().toString().equals("")) {
-                    /*LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    /*LayoutInflater layoutInflater = (LayoutInflater)
+                        getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     addView = layoutInflater.inflate(R.layout.fragment__row2, null);
                     txtViewRow = (TextView) addView.findViewById(R.id.editext_BarCode);
                     txtViewRow.setText(editText_Barcode.getText().toString());
@@ -123,10 +128,12 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
                     editText_Barcode.setText("");
                 }
                 else{
-                    Toast.makeText(getApplicationContext(), "La caja del código de barras esta vacía", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),
+                            "La caja del código de barras esta vacía", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -140,9 +147,8 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
         navigationView.setNavigationItemSelectedListener(this);
     }
     private void prepararLista() {
-        Log.e("=========>>>>>>>>", "  Soy el metodo prepararLista - Inventario Diario");
-        SQLiteDatabase db = baseDatos.getWritableDatabase();
-        Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO, null);
+        final SQLiteDatabase db = baseDatos.getWritableDatabase();
+        final Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO, null);
         finalContainer.removeAllViews();
         if (c.moveToFirst()) {
             do {
@@ -152,22 +158,37 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
                 str_user = c.getString(3);
                 str_barcode = c.getString(4);
                 str_branch = c.getString(5);*/
-                Log.e("", "==>>     " + c.getString(0) + "--" + c.getString(1) + "--" + c.getString(2) + "--" + c.getString(3) + "--" + c.getString(4) + "--" + c.getString(5));
-                LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                Log.e("", "==>>     " + c.getString(0) + "--" + c.getString(1) + "--"
+                        + c.getString(2) + "--" + c.getString(3) + "--" + c.getString(4)
+                        + "--" + c.getString(5));
+                LayoutInflater layoutInflater = (LayoutInflater)
+                        getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 addView = layoutInflater.inflate(R.layout.listitem_titular, null);
                 txtViewTit = (TextView) addView.findViewById(R.id.LblTitulo);
                 txtViewTit.setText(c.getString(4));
                 txtViewSub = (TextView) addView.findViewById(R.id.LblSubTitulo);
                 txtViewSub.setText(c.getString(2) + " -- " + c.getString(3));
+                btn_delete_item = (Button) addView.findViewById(R.id.btn_delete_item);
+                final String bar = txtViewTit.getText().toString();
+                btn_delete_item.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getApplicationContext(), "El código " + bar + " se eliminó correctamente", Toast.LENGTH_SHORT).show();
+                        db.execSQL("DELETE FROM " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO + " WHERE " + cls_Columnas_Inventario_Diario.STR_BARCODE + "=" + bar);
+                        prepararLista();
+                    }
+                });
                 finalContainer.addView(addView);
             } while (c.moveToNext());
         } else {
             Toast.makeText(getApplicationContext(), "No hay datos", Toast.LENGTH_SHORT);
         }
+
     }
 
     private void mtd_insert(String str_bar_code) {
-            Log.e("", "==>>     " + "--" + str_division + "--"+ txtView_Fecha.getText().toString() + "--" + str_user + "--" + str_bar_code + "--" + str_branch);
+            Log.e("", "==>>     " + "--" + str_division + "--"+ txtView_Fecha.getText().toString()
+                    + "--" + str_user + "--" + str_bar_code + "--" + str_branch);
 
             SQLiteDatabase db = baseDatos.getWritableDatabase();
             ContentValues valores = new ContentValues();
@@ -192,7 +213,9 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
                 Log.d("Entg000000000e", " === " + str);
             }
             String str_EquipoFolio = str;
-            Log.e("", "==>>     " + i + "--" + str_division + "--"+ txtView_Fecha.getText().toString() + "--" + str_user + "--" + str_EquipoFolio + "--" + str_branch);
+            Log.e("", "==>>     " + i + "--" + str_division + "--"
+                    + txtView_Fecha.getText().toString() + "--" + str_user + "--"
+                    + str_EquipoFolio + "--" + str_branch);
 
             SQLiteDatabase db = baseDatos.getWritableDatabase();
             ContentValues valores = new ContentValues();
@@ -211,7 +234,8 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
     public void mtd_Query_Tbl_Login_User(){
         Log.e("=========>>>>>>>>", "  Soy el metodo mtd_Query_Tbl_Login_User");
         SQLiteDatabase db = baseDatos.getWritableDatabase();
-        Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_LOGIN_USER+ " where int_select = 1", null);
+        Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_LOGIN_USER
+                + " where int_select = 1", null);
 
         if (c.moveToFirst()) {
             //Recorremos el cursor hasta que no haya más registros
@@ -223,10 +247,9 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
                 str_division = c.getString(4);
                 str_valida = c.getString(5);
                 str_bandera = c.getString(6);
-                Log.e("", "==>>     " + str_branch + "--" + str_user + "--" + str_pass + "--" + str_app + "--" + str_division + "--" + str_valida + "--" + str_bandera);
-
+                Log.e("", "==>>     " + str_branch + "--" + str_user + "--" + str_pass + "--"
+                        + str_app + "--" + str_division + "--" + str_valida + "--" + str_bandera);
                 txtView_Division.setText(str_division);
-
             } while(c.moveToNext());
         }
     }
@@ -234,8 +257,7 @@ public class Activity_Inventario_Diario extends AppCompatActivity implements Vie
     @Override
     public void onClick(View v) {
 
-        if (v.getId() == R.id.btn_AddEditText){
-        }
+        if (v.getId() == R.id.btn_AddEditText){ }
     }
 
     @Override

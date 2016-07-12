@@ -211,7 +211,6 @@ public class Activity_Login extends AppCompatActivity
                         Toast.makeText(getApplicationContext(), "Datos Incorrectos", Toast.LENGTH_SHORT).show();
                     }*/
                 }
-
             }
             catch(Exception ex)
             {
@@ -266,12 +265,15 @@ public class Activity_Login extends AppCompatActivity
                     tarea2.execute();
                 }
                 else {
+                    pDialog.cancel();
                     Toast.makeText(getApplicationContext(),
                             "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
                     txt_User.requestFocus();
                 }
             }
             else {
+
+                pDialog.cancel();
                 Toast.makeText(getApplicationContext(),
                         "Datos incorrectos", Toast.LENGTH_SHORT).show();
                 txt_User.requestFocus();
@@ -357,12 +359,14 @@ public class Activity_Login extends AppCompatActivity
 
                 }
                 else {
+                    pDialog.cancel();
                     Toast.makeText(getApplicationContext(),
                             "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
                     txt_User.requestFocus();
                 }
             }
             else {
+                pDialog.cancel();
                 Toast.makeText(getApplicationContext(),
                         "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
                 txt_User.requestFocus();
@@ -482,6 +486,8 @@ public class Activity_Login extends AppCompatActivity
                     }
                 }
                 else {
+
+                    pDialog.cancel();
                     Toast.makeText(getApplicationContext(),
                             "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
                     txt_User.requestFocus();

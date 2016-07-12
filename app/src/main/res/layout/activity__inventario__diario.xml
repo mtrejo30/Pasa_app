@@ -93,6 +93,7 @@
                 android:layout_marginLeft="5sp"
                 android:id="@+id/editText_BarcodeEscaner"
                 android:text=""
+                android:inputType="number"
                 android:paddingTop="20dp"
                 android:layout_height="wrap_content" />
             <Button
