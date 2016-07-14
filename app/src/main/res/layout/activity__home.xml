@@ -13,52 +13,56 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="80dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginLeft="25dp">
-        <Button
-            android:layout_width="140dp"
-            android:layout_height="120dp"
-            android:text="Escaneo Equipo Diario"
-            android:id="@+id/btn_AgregarDatos"
-            android:drawableTop="@drawable/ic_add_box_black_48dp"
-            android:layout_gravity="left|top" />
-        <Button
-            android:layout_width="140dp"
-            android:layout_height="120dp"
-            android:text="Inventario Diario"
-            android:drawableTop="@drawable/ic_local_see_black_48dp"
-            android:id="@+id/btn_InventarioDiario"
-            android:layout_gravity="right|top" />
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="80dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginLeft="25dp">
+            <Button
+                android:layout_width="140dp"
+                android:layout_height="120dp"
+                android:text="Alta de equipos"
+                android:textSize="12.5dp"
+                android:id="@+id/btn_AgregarDatos"
+                android:drawableTop="@drawable/ic_escaneo"
+                android:layout_gravity="left|top" />
+            <Button
+                android:layout_width="140dp"
+                android:layout_height="120dp"
+                android:text="Inventario Diario  "
+                android:textSize="13dp"
+                android:drawableTop="@drawable/ic_inventariodiario"
+                android:id="@+id/btn_InventarioDiario"
+                android:layout_gravity="right|top" />
+        </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_marginLeft="25dp"
-        android:gravity="center"
-        android:layout_marginRight="25dp"
-        android:layout_height="wrap_content">
-        <Button
-            android:layout_width="140dp"
-            android:layout_height="120dp"
-            android:text="Consulta Inventario Diario"
-            android:drawableTop="@drawable/ic_format_list_bulleted_black_48dp"
-            android:id="@+id/btn_ConsultaInventarioDiario"
-            android:layout_gravity="left|center_vertical" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_marginLeft="25dp"
+            android:gravity="center"
+            android:layout_marginRight="25dp"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_width="140dp"
+                android:layout_height="120dp"
+                android:textSize="12dp"
+                android:text="Consulta Inventario Diario"
+                android:drawableTop="@drawable/ic_inventario2"
+                android:id="@+id/btn_ConsultaInventarioDiario"
+                android:layout_gravity="left|center_vertical" />
 
-        <Button
-            android:layout_width="140dp"
-            android:layout_height="120dp"
-            android:text="Sincronización Equipos"
-            android:drawableTop="@drawable/ic_backup_black_48dp"
-            android:id="@+id/btn_Sincronizacion"
-            android:layout_gravity="right|center_vertical" />
+            <Button
+                android:layout_width="140dp"
+                android:layout_height="120dp"
+                android:textSize="12.5dp"
+                android:text="Sincronización Equipos"
+                android:drawableTop="@drawable/ic_launcher"
+                android:id="@+id/btn_Sincronizacion"
+                android:layout_gravity="right|center_vertical" />
 
-    </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
     <include

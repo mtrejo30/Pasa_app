@@ -53,6 +53,7 @@ public class Activity_AddData extends AppCompatActivity
     Button btn_AddEditText;
     TextView txtViewTit;
     TextView txtViewSub;
+    Button btn_delete_item;
     EditText editText_Barcode;
 
     Spinner spn_TipoEquipo;
@@ -73,6 +74,8 @@ public class Activity_AddData extends AppCompatActivity
     LinearLayout container;
     View addView;
     ViewGroup finalContainer = null;
+    //SimpleCursorAdapterPersonalizado_ genreSpinnerAdapter1;
+    //SimpleCursorAdapterPersonalizado__ genreSpinnerAdapter2;
     SimpleCursorAdapter genreSpinnerAdapter1;
     SimpleCursorAdapter genreSpinnerAdapter2;
     DbDataSource dataSource;
@@ -357,7 +360,7 @@ public class Activity_AddData extends AppCompatActivity
     }
     private void prepararLista() {
         Log.e("=========>>>>>>>>", "  Soy el metodo prepararLista - Inventario Diario");
-        SQLiteDatabase db = baseDatos.getWritableDatabase();
+        final SQLiteDatabase db = baseDatos.getWritableDatabase();
         Cursor c = db.rawQuery("Select * from " + Tablas.INVENTARIO, null);
         finalContainer.removeAllViews();
         if (c.moveToFirst()) {
@@ -375,6 +378,16 @@ public class Activity_AddData extends AppCompatActivity
                 txtViewTit.setText(c.getString(1));
                 txtViewSub = (TextView) addView.findViewById(R.id.LblSubTitulo);
                 txtViewSub.setText(c.getString(7) + " -- " + c.getString(8) + " -- " + c.getString(9));
+                btn_delete_item = (Button) addView.findViewById(R.id.btn_delete_item);
+                final String bar = txtViewTit.getText().toString();
+                btn_delete_item.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getApplicationContext(), "El código " + bar + " se eliminó correctamente", Toast.LENGTH_SHORT).show();
+                        db.execSQL("DELETE FROM " + Tablas.INVENTARIO + " WHERE " + Contrato.ColumnasPasa.EQUIPO_FOLIO + " = '" + bar + "'");
+                        prepararLista();
+                    }
+                });
                 finalContainer.addView(addView);
             } while (c.moveToNext());
         } else {
@@ -397,6 +410,24 @@ public class Activity_AddData extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
+        /*que cargue por defecto home en otro caso seria verificar*/
+        if (v.getId() == R.id.btn_AgregarDatos){
+            Intent i = new Intent(v.getContext(), Activity_AddData.class);
+            startActivity(i);
+        }
+        if (v.getId() == R.id.btn_InventarioDiario){
+            Intent i = new Intent(v.getContext(), Activity_Inventario_Diario.class);
+            startActivity(i);
+        }
+        if (v.getId() == R.id.btn_Sincronizacion){
+            Intent i = new Intent(v.getContext(), Actividad_Lista_Inventarios.class);
+            startActivity(i);
+        }
+        if (v.getId() == R.id.btn_ConsultaInventarioDiario){
+            Intent i = new Intent(v.getContext(), Activity_Consulta_Inventario_Diario.class);
+            startActivity(i);
+        }
+
     }
 
     @Override

@@ -5,18 +5,25 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:id="@+id/drawer_layout1"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="pasa.inventarios.com.Activity_AddData"
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
+
+    <!--
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    -->
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingTop="60dp"
         android:id="@+id/lin_Main"
-        android:paddingRight="35dp"
-        android:paddingLeft="35dp"
+        android:paddingRight="15dp"
+        android:paddingLeft="15dp"
         android:layout_weight="0.94">
         <TextView
             android:layout_width="fill_parent"
@@ -24,13 +31,14 @@
             android:layout_gravity="center_horizontal"
             android:text="Tipo de Equipo:"
             android:textSize="14sp"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/colorPrimaryTex"
             android:layout_marginTop="8dp"/>
         <Spinner
             android:id="@+id/spn_TipoEquipo"
             style="@android:style/Widget.Holo.Light.Spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/spinner_personalizado"
             android:prompt="@string/prompt_Division"
             android:spinnerMode="dropdown" >
         </Spinner>
@@ -40,37 +48,39 @@
             android:layout_gravity="center_horizontal"
             android:text="Almacén:"
             android:textSize="14sp"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/colorPrimaryTex"
             android:layout_marginTop="8dp"/>
         <Spinner
             android:id="@+id/spn_Almacen"
             style="@android:style/Widget.Holo.Light.Spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/spinner_personalizado"
             android:prompt="@string/prompt_Division"
             android:spinnerMode="dropdown">
         </Spinner>
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="20sp"
             android:layout_height="wrap_content">
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableTop="@drawable/ic_barcode_scan_white_48dp"
+                android:textSize="10dp"
+                android:drawableTop="@drawable/ic_escanner"
                 android:id="@+id/btn_Escanear"
-                android:text="Escanear"
-                android:textColor="@color/colorPrimaryT"
-                android:background="@color/colorPrimary" />
+                android:text="Escaner"
+                android:textColor="@color/colorPrimaryDark"></Button>
+            <!--android:textColor="@color/colorPrimary"-->
+
                 <EditText
-                    android:layout_width="150dp"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5sp"
-                    android:layout_marginLeft="5sp"
-                    android:inputType="number"
                     android:id="@+id/editText_BarcodeEscaner"
                     android:shadowColor="@color/colorPrimaryTex"
                     android:textColorHint="@color/colorPrimaryTex" />
+
 
             <Button
                 android:layout_width="wrap_content"
@@ -78,9 +88,9 @@
                 android:layout_alignParentRight="true"
                 android:id="@+id/btn_AddEditText"
                 android:text="Agregar"
-                android:drawableTop="@drawable/ic_add_box_white_48dp"
-                android:textColor="@color/colorPrimaryT"
-                android:background="@color/colorPrimary" />
+                android:textSize="10dp"
+                android:drawableTop="@drawable/ic_add"
+                android:textColor="@color/colorPrimaryDark"/>
 
         </LinearLayout>
         <ScrollView
@@ -95,19 +105,19 @@
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
+</ScrollView>
+    <include
+        layout="@layout/app_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-        <include
-            layout="@layout/app_bar_main"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <android.support.design.widget.NavigationView
-            android:id="@+id/nav_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:fitsSystemWindows="true"
-            app:headerLayout="@layout/nav_header_main"
-            app:menu="@menu/activity_main_drawer" />
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/activity_main_drawer" />
 
 </android.support.v4.widget.DrawerLayout>

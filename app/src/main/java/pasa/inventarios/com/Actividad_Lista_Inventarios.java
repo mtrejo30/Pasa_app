@@ -1,12 +1,16 @@
 package pasa.inventarios.com;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Entity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
@@ -50,6 +54,8 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
     boolean result = false;
     Button btn_Inve1;
     ArrayList lista;
+    boolean val1 = true;
+    boolean val2 = true;
 
     private static Activity_Login instancia = new Activity_Login();
 
@@ -76,19 +82,25 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
         btn_Inve1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TareaWSInsertar tare = new TareaWSInsertar();
-                tare.execute();
-                lista = new ArrayList<String[]>();
-                for (int i = 0; i < reciclador.getChildCount(); i++) {
-                    View view = reciclador.getChildAt(i);
-                    String str = "";
-                    TextView editText1 = (TextView) ((TextView) view);
-                    str = editText1.getText().toString();
-                    String[] splitDat = str.split("-");
-                    Log.d("Entg000000000e", " === " + splitDat[0] + "----" + splitDat[1]);
-                    lista.add(splitDat);
-                    Log.d("======>>>>>>", "String:::" + "" + " ======>>>>> View:::" + lista.size());
+                /*  Inicio validacion del internet    */
+                if (!estaConectado()) {
+                } else {
+                    TareaWSInsertar tare = new TareaWSInsertar();
+                    tare.execute();
+                    lista = new ArrayList<String[]>();
+                    for (int i = 0; i < reciclador.getChildCount(); i++) {
+                        View view = reciclador.getChildAt(i);
+                        String str = "";
+                        TextView editText1 = (TextView) ((TextView) view);
+                        str = editText1.getText().toString();
+                        String[] splitDat = str.split("-");
+                        Log.d("Entg000000000e", " === " + splitDat[0] + "----" + splitDat[1]);
+                        lista.add(splitDat);
+                        Log.d("======>>>>>>", "String:::" + "" + " ======>>>>> View:::" + lista.size());
+                    }
                 }
+                /*  Fin validacion del internet    */
+
             }
         });
 
@@ -115,6 +127,70 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
 
         //preparaButtons();
     }
+
+    /*  Inicio validacion del internet    */
+    protected Boolean estaConectado(){
+        if(conectadoWifi()){
+            return true;
+        }else{
+            if(conectadoRedMovil()){
+                return true;
+            }else{
+                showAlertDialog(this, "Revisa tu conexión a Internet",
+                        "Tu Dispositivo no tiene Conexión a Internet.", false);
+                return false;
+            }
+        }
+    }
+    /*  Fin validacion del internet    */
+
+    /*  Inicio validacion del internet    */
+    protected Boolean conectadoWifi(){
+        ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo info = connectivity.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            if (info != null) {
+                if (info.isConnected()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    /*  Fin validacion del internet    */
+
+    /*  Inicio validacion del internet    */
+    protected Boolean conectadoRedMovil(){
+        ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo info = connectivity.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if (info != null) {
+                if (info.isConnected()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    /*  Fin validacion del internet    */
+
+    /*  Inicio validacion del internet    */
+    public void showAlertDialog(Context context, String title, String message, Boolean status) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        alertDialog.setTitle(title);
+
+        alertDialog.setMessage(message);
+
+        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        alertDialog.show();
+    }
+    /*  Fin validacion del internet    */
+
     private void preparaButtons(){
         if (reciclador.getChildCount() > 0) {
             Log.e("PreparaBotones", "=========" + reciclador.getChildCount());
@@ -189,14 +265,35 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
                     post.setEntity(new StringEntity(message, "UTF8"));
                     post.setHeader("Content-type", "application/json");
                     HttpResponse resp = httpClient.execute(post);
+
                     if (resp != null) {
                         if (resp.getStatusLine().getStatusCode() == 204)
                             result = true;
                     }
+                    String respuesta =  EntityUtils.toString(resp.getEntity());
+                    //showToast(respuesta);
+                    String[] str_validar_msj = respuesta.split(" ");
+                    String str_last2 = str_validar_msj[str_validar_msj.length - 1];
+
+                    if (str_last2.equals("correctamente\"")) {
+                        String[] args = new String[]{splitDat[0].trim()};
+                        db.execSQL("DELETE FROM inventario WHERE equipo_Folio=?", args);
+                    } else {
+                        val1 = false;
+                        if (str_last2.equals("registrado\"")) {
+                            val2 = false;
+                            //Folios existentes con el mismo branch y usuario
+                        } /*else {
+                                val3 = false;
+                                //Ha ocuriido un error en el servidor
+                            }*/
+                    }
+
+/*
                     String[] args = new String[]{splitDat[0].trim()};
                     db.execSQL("DELETE FROM inventario WHERE equipo_Folio=?", args);
-                    String respuesta =  EntityUtils.toString(resp.getEntity());
-                    showToast(respuesta);
+*/
+
                     result = true;
                 }
 
@@ -225,8 +322,20 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
                 Log.e("onPostExecute", "=========" + reciclador.getChildCount());
                 btn_Inve1.setBackgroundColor(Color.parseColor("#60000000"));
                 btn_Inve1.setEnabled(false);
-                prepararLista();
             }
+            if (val1 == true) {
+                Toast.makeText(getApplicationContext(), "Todos los datos se sincronizaron de manera correcta", Toast.LENGTH_SHORT).show();
+            } else {
+                if (val2 == false) {
+                    Toast.makeText(getApplicationContext(), "Folios existentes con el mismo branch y usuario", Toast.LENGTH_SHORT).show();
+                }
+                /*
+                if (!val3) {
+                    Toast.makeText(getApplicationContext(), "Ha ocurrido un error en el servidor", Toast.LENGTH_LONG).show();
+                }
+                */
+            }
+            prepararLista();
         }
     }
 }

@@ -80,7 +80,7 @@ public class HelperInventarios extends SQLiteOpenHelper {
                         + cls_Columnas_Inventario_Diario.STR_DIVISION + " VARCHAR(30) NOT NULL,"
                         + cls_Columnas_Inventario_Diario.STR_FECHA + " VARCHAR(30) NOT NULL,"
                         + cls_Columnas_Inventario_Diario.STR_USER + " INTEGER NOT NULL,"
-                        + cls_Columnas_Inventario_Diario.STR_BARCODE + " INTEGER NOT NULL,"
+                        + cls_Columnas_Inventario_Diario.STR_BARCODE + " VARCHAR(30) NOT NULL,"
                         + cls_Columnas_Inventario_Diario.INT_FK_ID + " INTEGER NOT NULL,"
                         + " FOREIGN KEY (" + cls_Columnas_Inventario_Diario.INT_FK_ID + ") REFERENCES " + Tablas.TBL_LOGIN_USER + "(" + cls_Columnas_Login_User.ID_INT_BRANCHID + "))");
 

@@ -6,6 +6,7 @@
         <color name="colorAccent">#008d4c</color>
         <color name="navigationBarColor">#008d4c</color>
         <color name="lis_header">#ddd</color>
+    <color name="spinner">#f3f3f3</color>
         <color name="lis_boton">#c2f1eeee</color>
         <color name="contents_text">#ff000000</color>
         <color name="encode_view">#ffffffff</color>

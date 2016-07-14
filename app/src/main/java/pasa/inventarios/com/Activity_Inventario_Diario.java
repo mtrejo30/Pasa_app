@@ -174,7 +174,7 @@ public class Activity_Inventario_Diario extends AppCompatActivity
                     @Override
                     public void onClick(View v) {
                         Toast.makeText(getApplicationContext(), "El código " + bar + " se eliminó correctamente", Toast.LENGTH_SHORT).show();
-                        db.execSQL("DELETE FROM " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO + " WHERE " + cls_Columnas_Inventario_Diario.STR_BARCODE + "=" + bar);
+                        db.execSQL("DELETE FROM " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO + " WHERE " + cls_Columnas_Inventario_Diario.STR_BARCODE + "= '" + bar + "'");
                         prepararLista();
                     }
                 });
@@ -258,6 +258,25 @@ public class Activity_Inventario_Diario extends AppCompatActivity
     public void onClick(View v) {
 
         if (v.getId() == R.id.btn_AddEditText){ }
+
+        /*que cargue por defecto home en otro caso seria verificar*/
+        if (v.getId() == R.id.btn_AgregarDatos){
+            Intent i = new Intent(v.getContext(), Activity_AddData.class);
+            startActivity(i);
+        }
+        if (v.getId() == R.id.btn_InventarioDiario){
+            Intent i = new Intent(v.getContext(), Activity_Inventario_Diario.class);
+            startActivity(i);
+        }
+        if (v.getId() == R.id.btn_Sincronizacion){
+            Intent i = new Intent(v.getContext(), Actividad_Lista_Inventarios.class);
+            startActivity(i);
+        }
+        if (v.getId() == R.id.btn_ConsultaInventarioDiario){
+            Intent i = new Intent(v.getContext(), Activity_Consulta_Inventario_Diario.class);
+            startActivity(i);
+        }
+
     }
 
     @Override

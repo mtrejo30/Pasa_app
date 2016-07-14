@@ -167,7 +167,6 @@ public class Activity_Login extends AppCompatActivity
         String a = txt_User.getText().toString();
         String b = txt_Pass.getText().toString();
 
-
         protected void onPreExecute() {
 
             /*  Inicio validacion del internet    */
@@ -178,7 +177,6 @@ public class Activity_Login extends AppCompatActivity
             pDialog.show();
             /*  Fin validacion del internet    */
         }
-
 
         protected Boolean doInBackground(String... params) {
             DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -563,4 +561,5 @@ public class Activity_Login extends AppCompatActivity
         alertDialog.show();
     }
     /*  Fin validacion del internet    */
+
 }

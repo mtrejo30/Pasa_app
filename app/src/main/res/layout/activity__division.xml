@@ -4,35 +4,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#7A7676">
+
     <RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_marginLeft="25dp"
-    android:layout_marginRight="25dp"
-    android:layout_marginTop="50dp"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="50dp"
         android:background="#fff"
-    android:layout_marginBottom="50dp"
-    android:layout_height="match_parent">
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/selecciona_una_division"
-        android:textSize="20sp"
-        android:gravity="center_horizontal"
-        android:textColor="@color/colorPrimary"
-        android:layout_marginTop="100dp"/>
+        android:layout_marginBottom="50dp"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/selecciona_una_division"
+            android:textSize="20sp"
+            android:gravity="center_horizontal"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="100dp"/>
 
-    <Spinner
-        android:id="@+id/spn_Division"
-        style="@android:style/Widget.Holo.Light.Spinner"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:prompt="@string/prompt_Division"
-        android:spinnerMode="dialog"
-        android:layout_marginTop="150dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp">
+        <Spinner
+            android:id="@+id/spn_Division"
+            style="@android:style/Widget.Holo.Light.Spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:prompt="@string/prompt_Division"
+            android:spinnerMode="dialog"
+            android:background="@drawable/spinner_personalizado"
+            android:foregroundGravity="center_horizontal"
+            android:touchscreenBlocksFocus="false"
+            android:layout_marginTop="150dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp">
 
-    </Spinner>
-</RelativeLayout>
+        </Spinner>
+    </RelativeLayout>
 </RelativeLayout>

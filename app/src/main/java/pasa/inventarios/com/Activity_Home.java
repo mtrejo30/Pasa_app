@@ -64,6 +64,7 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public void onClick(View v) {
+
         /*que cargue por defecto home en otro caso seria verificar*/
         if (v.getId() == R.id.btn_AgregarDatos){
             Intent i = new Intent(v.getContext(), Activity_AddData.class);
@@ -81,6 +82,7 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
             Intent i = new Intent(v.getContext(), Activity_Consulta_Inventario_Diario.class);
             startActivity(i);
         }
+
     }
 
     @Override
