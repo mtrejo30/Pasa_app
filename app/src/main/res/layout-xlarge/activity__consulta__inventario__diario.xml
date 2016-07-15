@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinador"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true" >
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </android.support.design.widget.AppBarLayout>
+    <LinearLayout
+        android:layout_marginTop="75dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:id="@+id/lin_Btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="140sp"
+            android:text="@string/division_consulta_inventario_diario"
+            android:textSize="13sp"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="90sp"
+            android:text="@string/Fecha_consulta_inventario_diario"
+            android:textSize="13sp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="13sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="140sp"
+            android:id="@+id/txtView_Division"
+            android:text="@string/division_consulta_inventario_diario"
+            android:textColor="@color/contents_text"
+            android:textSize="13sp"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:layout_width="90sp"
+            android:textSize="13sp"
+            android:id="@+id/editText_Fecha"
+            android:layout_marginLeft="8sp"
+            android:layout_height="wrap_content" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:id="@+id/btn_search"
+            android:src="@drawable/ic_buscar"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="155dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:id="@+id/lin_Btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn_mostrar"
+            android:layout_width="wrap_content"
+            android:background="@color/colorPrimary"
+            android:textSize="11sp"
+            android:layout_height="wrap_content"
+            android:text="Mostrar todos los registros"/>
+        <Button
+            android:id="@+id/btn_Sincronizacion"
+            android:layout_alignParentEnd="true"
+            android:textSize="11sp"
+            android:layout_width="wrap_content"
+            android:background="@color/colorPrimary"
+            android:layout_height="wrap_content"
+            android:text="Sincronizar"
+            android:layout_alignParentRight="true" />
+        </RelativeLayout>
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_marginTop="210dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/lin_AddEditTextEscaner"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </ScrollView>
+    <!--
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_marginTop="130dp"
+        android:layout_height="wrap_content">
+        <ListView android:id="@+id/LstOpciones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    -->
+    <!-- <include layout="@layout/contenido_actividad_lista"/> -->
+</android.support.design.widget.CoordinatorLayout>

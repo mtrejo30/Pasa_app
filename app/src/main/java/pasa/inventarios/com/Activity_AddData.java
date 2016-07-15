@@ -6,16 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.util.Log;
 import android.view.WindowManager;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
@@ -26,12 +23,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -41,10 +36,6 @@ import android.widget.Toast;
 import pasa.inventarios.com.Contrato.Inventarios;
 import pasa.inventarios.com.HelperInventarios.*;
 import pasa.inventarios.com.client.android.CaptureActivity;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class Activity_AddData extends AppCompatActivity
         implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
@@ -59,23 +50,16 @@ public class Activity_AddData extends AppCompatActivity
     Spinner spn_TipoEquipo;
     Spinner spn_Almacen;
     Button btn_Escanear;
-    Button btn_Save;
-    Button btn_Add;
     int id_Tipo_Equipo;
     int id_Equipo_Almacen;
     String str_Tipo_Equipo = "";
     String str_Equipo_Almacen = "";
+    String str_branch;
     int id_Branch;
-    int contador = 0;
-    TextView textOut;
     HelperInventarios baseDatos;
-    final int[] cont = {0};
-    EditText txt_Cantidad;
     LinearLayout container;
     View addView;
     ViewGroup finalContainer = null;
-    //SimpleCursorAdapterPersonalizado_ genreSpinnerAdapter1;
-    //SimpleCursorAdapterPersonalizado__ genreSpinnerAdapter2;
     SimpleCursorAdapter genreSpinnerAdapter1;
     SimpleCursorAdapter genreSpinnerAdapter2;
     DbDataSource dataSource;
@@ -276,6 +260,7 @@ public class Activity_AddData extends AppCompatActivity
         */
 
         btn_AddEditText = (Button) findViewById(R.id.btn_AddEditText);
+        assert btn_AddEditText != null;
         btn_AddEditText.setEnabled(true);
         btn_AddEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -345,19 +330,30 @@ public class Activity_AddData extends AppCompatActivity
 
     private void mtd_insert(String str_bar_code) {
         SQLiteDatabase db = baseDatos.getWritableDatabase();
-        ContentValues valores = new ContentValues();
-        valores.clear();
-        valores.put(Inventarios.EQUIPO_FOLIO, str_bar_code);
-        valores.put(Inventarios.EQUIPO_RFID, 0);
-        valores.put(Inventarios.FK_TIPO_EQUIPO_ID, id_Tipo_Equipo);
-        valores.put(Inventarios.FK_EQUIPO_ALMACEN_ID, id_Equipo_Almacen);
-        valores.put(Inventarios.EQUIPO_ESTATUS_ID, 1);
-        valores.put(Inventarios.EQUIPO_PROPIO, 0);
-        valores.put(Inventarios.FK_BRANCH_ID, id_Branch);
-        valores.put(Inventarios.EQUIPO_ALMACEN_STR, str_Equipo_Almacen);
-        valores.put(Inventarios.TIPO_EQUIPO_STR, str_Tipo_Equipo);
-        db.insertOrThrow(Tablas.INVENTARIO, null, valores);
+
+        Cursor c = db.rawQuery("Select * from " + Tablas.INVENTARIO + " where "
+                + Contrato.ColumnasPasa.EQUIPO_FOLIO + " = '" + editText_Barcode.getText().toString() + "'"
+                , null);
+        if(c.moveToFirst()){
+            Toast.makeText(getApplicationContext(), "El folio: " + editText_Barcode.getText().toString().toUpperCase()
+                    + " ya existe en la base con el mismo Branch", Toast.LENGTH_LONG).show();
+        }else {
+            ContentValues valores = new ContentValues();
+            valores.clear();
+            valores.put(Inventarios.EQUIPO_FOLIO, str_bar_code);
+            valores.put(Inventarios.EQUIPO_RFID, 0);
+            valores.put(Inventarios.FK_TIPO_EQUIPO_ID, id_Tipo_Equipo);
+            valores.put(Inventarios.FK_EQUIPO_ALMACEN_ID, id_Equipo_Almacen);
+            valores.put(Inventarios.EQUIPO_ESTATUS_ID, 1);
+            valores.put(Inventarios.EQUIPO_PROPIO, 0);
+            valores.put(Inventarios.FK_BRANCH_ID, id_Branch);
+            valores.put(Inventarios.EQUIPO_ALMACEN_STR, str_Equipo_Almacen);
+            valores.put(Inventarios.TIPO_EQUIPO_STR, str_Tipo_Equipo);
+            db.insertOrThrow(Tablas.INVENTARIO, null, valores);
+        }
     }
+
+
     private void prepararLista() {
         Log.e("=========>>>>>>>>", "  Soy el metodo prepararLista - Inventario Diario");
         final SQLiteDatabase db = baseDatos.getWritableDatabase();

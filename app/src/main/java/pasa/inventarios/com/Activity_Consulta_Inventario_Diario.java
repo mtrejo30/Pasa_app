@@ -1,4 +1,5 @@
 package pasa.inventarios.com;
+
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
@@ -67,6 +68,7 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
     boolean result = false;
     boolean val1 = true;
     boolean val2 = true;
+    boolean val3 = true;
     private DatePickerDialog fromDatePickerDialog;
     private SimpleDateFormat dateFormatter;
     private AdaptadorInventarios adaptador;
@@ -387,11 +389,9 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
                             val1 = false;
                             if (str_last2.equals("Existente\"")) {
                                 val2 = false;
-                                //Folios existentes con el mismo branch y usuario
-                            } /*else {
+                            } else {
                                 val3 = false;
-                                //Ha ocuriido un error en el servidor
-                            }*/
+                            }
                         }
 
                         Log.e("getEntity.getContent", "=====>>>>> " + respuesta);
@@ -428,21 +428,21 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
                 btn_Sincronizar.setEnabled(false);
             }
             //Toast.makeText(getApplicationContext(), "Entré al onPostExecute", Toast.LENGTH_SHORT).show();
-            if (val1 == true) {
+            if (val1) {
                 Toast.makeText(getApplicationContext(), "Todos los datos se sincronizaron de manera correcta", Toast.LENGTH_SHORT).show();
             } else {
-                if (val2 == false) {
+                if (!val2) {
                     Toast.makeText(getApplicationContext(), "Folios existentes con el mismo branch y usuario", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (!val3) {
+                        Toast.makeText(getApplicationContext(), "Ha ocurrido un error, repórtelo con la empresa", Toast.LENGTH_LONG).show();
+                    }
                 }
-                /*
-                if (!val3) {
-                    Toast.makeText(getApplicationContext(), "Ha ocurrido un error en el servidor", Toast.LENGTH_LONG).show();
-                }
-                */
             }
             prepararLista();
         }
     }
+
 
     /*  Inicio validacion del internet    */
     protected Boolean estaConectado(){

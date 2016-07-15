@@ -83,9 +83,12 @@ public class Activity_Login extends AppCompatActivity
         _variables.pass = prefs.getString("pass", "");
         if (prefs.getString("user","").length()>0)
         {
+            Toast.makeText(getApplicationContext(), "Bienvenido a tu sesión guardado", Toast.LENGTH_LONG).show();
             Intent i = new Intent(Activity_Login.this,Activity_Home.class);
             startActivity(i);
             //finish();
+        }else {
+            Toast.makeText(getApplicationContext(), "No existe ninguna sesión guardada", Toast.LENGTH_LONG).show();
         }
 
         setContentView(R.layout.activity__login);
@@ -561,5 +564,6 @@ public class Activity_Login extends AppCompatActivity
         alertDialog.show();
     }
     /*  Fin validacion del internet    */
+
 
 }

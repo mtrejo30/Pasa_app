@@ -6,26 +6,62 @@
         <item
             android:id="@+id/nav_perfil"
             android:icon="@drawable/ic_person_black_24dp"
-            android:title="Perfil" />
+            android:title="Inicio" />
         <item
             android:id="@+id/nav_Agregar"
-            android:icon="@drawable/ic_description_black_24dp"
-            android:title="Carga de Datos" />
+            android:icon="@drawable/ic_phone_android_black_18dp"
+            android:title="Alta de equipos" />
         <item
             android:id="@+id/nav_InventarioDiario"
-            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:icon="@drawable/ic_file_document_box_black_18dp"
             android:title="Inventario Diario" />
         <item
             android:id="@+id/nav_ConsultaInventarioDiario"
-            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:icon="@drawable/ic_camera_black_18dp"
             android:title="Consulta Inventario Diario" />
         <item
             android:id="@+id/nav_Sincronizar"
-            android:icon="@drawable/ic_lock_open_black_24dp"
-            android:title="Sincronizar" />
+            android:icon="@drawable/ic_cloud_upload_black_18dp"
+            android:title="Sincronización Equipos" />
         <item
             android:id="@+id/nav_Salir"
             android:icon="@drawable/ic_lock_open_black_24dp"
-            android:title="Salir" />
+            android:title="Salir" /><!--
+        <item
+            android:id="@+id/Salir2"
+            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:title="Salir2" />
+        <item
+            android:id="@+id/Salir3"
+            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:title="Salir3" />
+        <item
+            android:id="@+id/Prueba4"
+            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:title="Prueba4" />
+        <item
+            android:id="@+id/Prueba5"
+            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:title="Prueba5" />
+        <item
+            android:id="@+id/Prueba6"
+            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:title="Prueba6" />
+        <item
+            android:id="@+id/Prueba7"
+            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:title="Prueba7" />
+        <item
+            android:id="@+id/Prueba8"
+            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:title="Prueba8" />
+        <item
+            android:id="@+id/Prueba9"
+            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:title="Prueba9" />
+        <item
+            android:id="@+id/Prueba10"
+            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:title="Prueba10" />-->
     </group>
 </menu>

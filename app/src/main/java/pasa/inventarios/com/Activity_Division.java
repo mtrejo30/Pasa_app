@@ -80,6 +80,7 @@ public class Activity_Division extends AppCompatActivity {
                 String h = colCur.getString(5);
                 String j = colCur.getString(6);
                 str_Division = parent.getItemAtPosition(position).toString();
+                Log.e("", "------------------------------>" + a + "-" + s + "-" + d + "-" + f + "-" + g + "-" + h + "-" + j);
 
                 SQLiteDatabase db = baseDatos.getWritableDatabase();
                 ContentValues valores = new ContentValues();
@@ -87,6 +88,7 @@ public class Activity_Division extends AppCompatActivity {
                 db.execSQL("UPDATE "+ Tablas.TBL_LOGIN_USER +" SET int_select= " + 0);
                 valores.clear();
                 db.execSQL("UPDATE "+ Tablas.TBL_LOGIN_USER +" SET int_select= " + 1 + " WHERE _id= " + a);
+                valores.clear();
                 //valores.put(cls_Columnas_Login_User.INT_SELECT, 1);
                 //db.update(Tablas.TBL_LOGIN_USER, valores, "_id=" + a, null);
 
