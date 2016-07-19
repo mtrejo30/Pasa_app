@@ -180,11 +180,13 @@ final class CameraConfigurationManager {
 
     }
 
+
     parameters.setPreviewSize(bestPreviewSize.x, bestPreviewSize.y);
 
     theCamera.setParameters(parameters);
 
     theCamera.setDisplayOrientation(cwRotationFromDisplayToCamera);
+    //theCamera.setDisplayOrientation(90);
 
     Camera.Parameters afterParameters = theCamera.getParameters();
     Camera.Size afterSize = afterParameters.getPreviewSize();

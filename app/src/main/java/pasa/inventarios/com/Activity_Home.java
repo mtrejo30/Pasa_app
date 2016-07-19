@@ -1,6 +1,5 @@
 package pasa.inventarios.com;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -57,7 +57,6 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
         }
         return instancia;
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +124,7 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
 
     }
 
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
@@ -172,7 +172,7 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
             boolean bool_query_inv1 = mtd_consulta_inventario();
             boolean bool_query_inv_diario1 = mtd_consulta_tbl_inventario_diario();
 
-            Toast.makeText(getApplicationContext(), "Datos " + bool_query_inv1 + bool_query_inv_diario1, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Datos " + bool_query_inv1 + bool_query_inv_diario1, Toast.LENGTH_SHORT).show();
             Log.e("", "Datos " + bool_query_inv1 + bool_query_inv_diario1);
             if(bool_query_inv1 || bool_query_inv_diario1){
                 mtd_alert_dialog(bool_query_inv1, bool_query_inv_diario1);
@@ -214,7 +214,7 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
                     mtd_salir_sesion();
                     //mtd_cerrar_sesion();
                 }
-                Toast.makeText(getApplicationContext(), "Sincronizar y salir", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Sincronizar y salir", Toast.LENGTH_LONG).show();
             }
         });
         dialogo1.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -223,13 +223,13 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
                 mtd_borrar_y_salir();
                 mtd_salir_sesion();
                 //mtd_cerrar_sesion();
-                Toast.makeText(getApplicationContext(), "Salir sin sincronizar", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Salir sin sincronizar", Toast.LENGTH_LONG).show();
             }
         });
         dialogo1.setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getApplicationContext(), "Se canceló", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Se canceló", Toast.LENGTH_LONG).show();
             }
         });
         dialogo1.show();
@@ -271,12 +271,12 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
         if (c.moveToFirst()) {
             Log.e("", "==>>     " + c.getString(0) + "--" + c.getString(1) + "--" + c.getString(2) + "--" + c.getString(3) + "--" + c.getString(4) + "--" + c.getString(6) + "--" + c.getString(7) + "--" + c.getString(8));
             bool_query_inv = true;
-            Toast.makeText(getApplicationContext(), "Si hay datos " + bool_query_inv, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Si hay datos " + bool_query_inv, Toast.LENGTH_SHORT).show();
             do {
             } while (c.moveToNext());
         } else {
             bool_query_inv = false;
-            Toast.makeText(getApplicationContext(), "No hay datos " + bool_query_inv, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "No hay datos " + bool_query_inv, Toast.LENGTH_SHORT).show();
         }
         return bool_query_inv;
     }
@@ -290,12 +290,12 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
                     + c.getString(2) + "--" + c.getString(3) + "--" + c.getString(4)
                     + "--" + c.getString(5));
             bool_query_inv_diario = true;
-            Toast.makeText(getApplicationContext(), "Si hay datos " + bool_query_inv_diario, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Si hay datos " + bool_query_inv_diario, Toast.LENGTH_SHORT).show();
             do {
             } while (c.moveToNext());
         } else {
             bool_query_inv_diario = false;
-            Toast.makeText(getApplicationContext(), "No hay datos " + bool_query_inv_diario, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "No hay datos " + bool_query_inv_diario, Toast.LENGTH_SHORT).show();
         }
         return bool_query_inv_diario;
     }
@@ -310,7 +310,6 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
-
     /*  Inicio validacion del internet    */
     protected Boolean estaConectado(){
         if(conectadoWifi()){
@@ -434,4 +433,5 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
         }
         protected void onPostExecute(Boolean result) { if (result) { } }
     }
+
 }

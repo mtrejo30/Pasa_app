@@ -36,6 +36,8 @@
             android:id="@+id/spn_TipoEquipo"
             style="@android:style/Widget.Holo.Light.Spinner"
             android:layout_width="match_parent"
+
+            android:background="@drawable/spinner_personalizado"
             android:layout_height="wrap_content"
             android:prompt="@string/prompt_Division"
             android:spinnerMode="dropdown" >
@@ -103,6 +105,7 @@
 
  </LinearLayout>
     </ScrollView>
+
      <include
          layout="@layout/app_bar_main"
          android:layout_width="match_parent"

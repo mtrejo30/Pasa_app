@@ -83,33 +83,41 @@ public final class ViewfinderView extends View {
       return; // not ready yet, early draw before done configuring
     }
     Rect frame = cameraManager.getFramingRect();
-    Rect previewFrame = cameraManager.getFramingRectInPreview();    
+    Rect previewFrame = cameraManager.getFramingRectInPreview();
     if (frame == null || previewFrame == null) {
       return;
     }
+
     int width = canvas.getWidth();
     int height = canvas.getHeight();
-
     // Draw the exterior (i.e. outside the framing rect) darkened
     paint.setColor(resultBitmap != null ? resultColor : maskColor);
+    //           left-top-right-bottom
+    canvas.drawRect(0, frame.top, frame.left, frame.bottom + 1, paint);//left
+    canvas.drawRect(0, 0, width, frame.top, paint);//top
+    canvas.drawRect(frame.right + 1, frame.top, width, frame.bottom + 1, paint);//right
+    canvas.drawRect(0, frame.bottom + 1, width, height, paint);//bottom
+    /*
     canvas.drawRect(0, 0, width, frame.top, paint);
     canvas.drawRect(0, frame.top, frame.left, frame.bottom + 1, paint);
     canvas.drawRect(frame.right + 1, frame.top, width, frame.bottom + 1, paint);
     canvas.drawRect(0, frame.bottom + 1, width, height, paint);
-
+    */
     if (resultBitmap != null) {
       // Draw the opaque result bitmap over the scanning rectangle
       paint.setAlpha(CURRENT_POINT_OPACITY);
       canvas.drawBitmap(resultBitmap, null, frame, paint);
     } else {
-
       // Draw a red "laser scanner" line through the middle to show decoding is active
       paint.setColor(laserColor);
       paint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
       scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
       int middle = frame.height() / 2 + frame.top;
+      int middle2 = frame.width() / 2;
+      //           left-top-right-bottom
+      //canvas.drawRect(middle2 + 35, frame.top, middle2 + 37, frame.bottom, paint);
       canvas.drawRect(frame.left + 2, middle - 1, frame.right - 1, middle + 2, paint);
-      
+
       float scaleX = frame.width() / (float) previewFrame.width();
       float scaleY = frame.height() / (float) previewFrame.height();
 
@@ -127,8 +135,8 @@ public final class ViewfinderView extends View {
         synchronized (currentPossible) {
           for (ResultPoint point : currentPossible) {
             canvas.drawCircle(frameLeft + (int) (point.getX() * scaleX),
-                              frameTop + (int) (point.getY() * scaleY),
-                              POINT_SIZE, paint);
+                    frameTop + (int) (point.getY() * scaleY),
+                    POINT_SIZE, paint);
           }
         }
       }
@@ -139,8 +147,8 @@ public final class ViewfinderView extends View {
           float radius = POINT_SIZE / 2.0f;
           for (ResultPoint point : currentLast) {
             canvas.drawCircle(frameLeft + (int) (point.getX() * scaleX),
-                              frameTop + (int) (point.getY() * scaleY),
-                              radius, paint);
+                    frameTop + (int) (point.getY() * scaleY),
+                    radius, paint);
           }
         }
       }
@@ -148,10 +156,10 @@ public final class ViewfinderView extends View {
       // Request another update at the animation interval, but only repaint the laser line,
       // not the entire viewfinder mask.
       postInvalidateDelayed(ANIMATION_DELAY,
-                            frame.left - POINT_SIZE,
-                            frame.top - POINT_SIZE,
-                            frame.right + POINT_SIZE,
-                            frame.bottom + POINT_SIZE);
+              frame.left - POINT_SIZE,
+              frame.top - POINT_SIZE,
+              frame.right + POINT_SIZE,
+              frame.bottom + POINT_SIZE);
     }
   }
 

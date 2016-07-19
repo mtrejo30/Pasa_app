@@ -123,6 +123,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     @Override
     public void onCreate(Bundle icicle) {
+
         super.onCreate(icicle);
 
         Window window = getWindow();
@@ -135,6 +136,23 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         ambientLightManager = new AmbientLightManager(this);
 
         //PreferenceManager.setDefaultValues(this, R.xml.preferenc, false);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+/*
+        Toast.makeText(this, "Orientación", Toast.LENGTH_LONG).show();
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Toast.makeText(this, "landscape", Toast.LENGTH_LONG).show();
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Toast.makeText(this, "portrait", Toast.LENGTH_LONG).show();
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+*/
     }
 
     @Override
@@ -161,17 +179,18 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         lastResult = null;
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
         if (prefs.getBoolean(PreferencesActivity.KEY_DISABLE_AUTO_ORIENTATION, true)) {
-            setRequestedOrientation(getCurrentOrientation());
+            //setRequestedOrientation(getCurrentOrientation());
+            //Toast.makeText(getApplicationContext(), "Orientacion actual:" + ActivityInfo.SCREEN_ORIENTATION_SENSOR, Toast.LENGTH_LONG).show();
+            //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            //getCurrentOrientation();
             //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            getCurrentOrientation();
+            //getCurrentOrientation();
         }
 
         resetStatusView();
-
 
         beepManager.updatePrefs();
         ambientLightManager.start(cameraManager);
@@ -195,7 +214,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             String dataString = intent.getDataString();
 
             if (Intents.Scan.ACTION.equals(action)) {
-
                 // Scan the formats the intent requested, and return the result to the calling activity.
                 source = IntentSource.NATIVE_APP_INTENT;
                 decodeFormats = DecodeFormatManager.parseDecodeFormats(intent);

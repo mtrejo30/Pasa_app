@@ -81,10 +81,9 @@
                 android:layout_alignParentRight="true" />
         </RelativeLayout>
         -->
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_marginTop="20sp"
-            android:gravity="center"
             android:layout_height="wrap_content">
             <Button
                 android:layout_width="wrap_content"
@@ -95,24 +94,23 @@
                 android:textSize="11dp"
                 android:textColor="@color/colorPrimaryTex" />
             <EditText
-                android:layout_width="150dp"
-                android:layout_marginStart="5sp"
-                android:layout_marginLeft="5sp"
+                android:layout_width="350dp"
+                android:layout_marginLeft="100sp"
                 android:id="@+id/editText_BarcodeEscaner"
                 android:text=""
-                android:paddingTop="20dp"
+                android:paddingTop="40dp"
                 android:layout_height="wrap_content" />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5sp"
+                android:layout_alignParentEnd="true"
                 android:text="Agregar"
                 android:textSize="11dp"
                 android:drawableTop="@drawable/ic_add"
                 android:id="@+id/btn_AddEditText"
                 android:textColor="@color/colorPrimaryTex"
-                android:layout_marginLeft="5sp" />
-        </LinearLayout>
+                android:layout_alignParentRight="true" />
+        </RelativeLayout>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -128,6 +126,7 @@
     </LinearLayout>
 
     </ScrollView>
+
     <include
         layout="@layout/app_bar_main"
         android:layout_width="match_parent"
