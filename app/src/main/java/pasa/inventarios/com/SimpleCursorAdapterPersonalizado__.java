@@ -399,7 +399,6 @@ public class SimpleCursorAdapterPersonalizado__ extends ResourceCursorAdapter im
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-
     }
 
     public View getView(int i, View view, ViewGroup viewgroup) {

@@ -88,7 +88,7 @@ public class Activity_Login extends AppCompatActivity
             startActivity(i);
             //finish();
         }else {
-            Toast.makeText(getApplicationContext(), "No existe ninguna sesión guardada", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "No existe ninguna sesión guardada", Toast.LENGTH_LONG).show();
         }
 
         setContentView(R.layout.activity__login);
@@ -99,6 +99,8 @@ public class Activity_Login extends AppCompatActivity
         chrecuerdame=(CheckBox) findViewById(R.id.checkBox);
         txt_User = (EditText) findViewById(R.id.idtUsuario);
         txt_Pass = (EditText) findViewById(R.id.editText);
+
+
 
         chrecuerdame.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -111,7 +113,7 @@ public class Activity_Login extends AppCompatActivity
                 editor.commit();
             }
         });
-
+        chrecuerdame.setVisibility(View.INVISIBLE);
         dataSource = new DbDataSource(this);
 
         String uri = getIntent().getStringExtra(URI_CONTACTO);
@@ -131,6 +133,13 @@ public class Activity_Login extends AppCompatActivity
                 if(!estaConectado()) {
                 }
                 else {
+
+                    SharedPreferences prefs= getSharedPreferences("sesion",Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("user", txt_User.getText().toString());
+                    editor.putString("pass", txt_Pass.getText().toString());
+                    editor.commit();
+
                     TareaWSListarUser tarea = new TareaWSListarUser();
                     tarea.execute();
                 }
@@ -202,8 +211,8 @@ public class Activity_Login extends AppCompatActivity
                     clientes_res[i][0] = idBranch;
                     clientes_res[i][1] = strName;
                     clientes_res[i][2] = strValida;
-                    Log.d("TareaWSListar", "Metodo - for: " + i);
-                    Log.e("apiLogin", "=========>>>>>>>>>: " + strValida);
+                    Log.i("TareaWSListar", "Metodo - for: " + i);
+                    Log.i("apiLogin", "=========>>>>>>>>>: " + strValida);
                     /*if (Integer.parseInt(clientes_res[i][2]) == 1) {
                         */
                     insertar(i);
@@ -215,7 +224,7 @@ public class Activity_Login extends AppCompatActivity
             }
             catch(Exception ex)
             {
-                Log.e("Error =====>>>>> ","Api: loginUser", ex);
+                Log.i("Error =====>>>>> ","Api: loginUser", ex);
                 Toast.makeText(getApplicationContext(),
                         "Ocurrió un error al tratar de conectarse al servidor", Toast.LENGTH_SHORT).show();
                 resul = false;
@@ -242,11 +251,11 @@ public class Activity_Login extends AppCompatActivity
                     valores.put(cls_Columnas_Login_User.INT_SELECT, 0);
                     db.insertOrThrow(HelperInventarios.Tablas.TBL_LOGIN_USER, null, valores);
                 }
-                    Log.d("", " ===>> " + (clientes_res[i][0]));
-                    Log.d("", " ===>> " + (clientes_res[i][1]));
-                    Log.d("", " ===>> " + (clientes_res[i][2]));
-                    Log.d("", " ===>> " + a);
-                    Log.d("", " ===>> " + b);
+                    Log.i("", " ===>> " + (clientes_res[i][0]));
+                    Log.i("", " ===>> " + (clientes_res[i][1]));
+                    Log.i("", " ===>> " + (clientes_res[i][2]));
+                    Log.i("", " ===>> " + a);
+                    Log.i("", " ===>> " + b);
                     valores.clear();
                     valores.put(cls_Columnas_Login_User.ID_INT_BRANCHID, (Integer.parseInt(clientes_res[i][0])));
                     valores.put(cls_Columnas_Login_User.INT_USER, a);
@@ -266,17 +275,26 @@ public class Activity_Login extends AppCompatActivity
                     tarea2.execute();
                 }
                 else {
+
+                    SharedPreferences preferences = getSharedPreferences("sesion", 0);
+                    preferences.edit().remove("user").commit();
+                    preferences.edit().remove("pass").commit();
+
                     pDialog.cancel();
                     Toast.makeText(getApplicationContext(),
-                            "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                            "Error al descargar datos del usuario", Toast.LENGTH_SHORT).show();
                     txt_User.requestFocus();
                 }
             }
             else {
 
+                SharedPreferences preferences = getSharedPreferences("sesion", 0);
+                preferences.edit().remove("user").commit();
+                preferences.edit().remove("pass").commit();
+
                 pDialog.cancel();
                 Toast.makeText(getApplicationContext(),
-                        "Datos incorrectos", Toast.LENGTH_SHORT).show();
+                        "Error al descargar datos del usuario", Toast.LENGTH_SHORT).show();
                 txt_User.requestFocus();
             }
         }
@@ -290,10 +308,10 @@ public class Activity_Login extends AppCompatActivity
         protected Boolean doInBackground(String... params) {
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpGet del =
-                    new HttpGet("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/getCatalogoAlmacenes?branchId="+(Integer.parseInt(clientes_res[0][0])));
+                    new HttpGet("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/getCatalogoAlmacenes?branchId="+(Integer.parseInt(clientes_res[0][0])) + "&idTrabajador=" + a);
             del.addHeader(BasicScheme.authenticate( new UsernamePasswordCredentials("adminLogistica", "Pasa123!"), "UTF-8", false));
+            //?branchId={branchId}&idTrabajador={idTrabajador}
             del.setHeader("content-type", "application/json");
-            Log.d("Aquiiiiiii", " ======================================>> " + (clientes_res[0][0]));
 
             try
             {
@@ -301,19 +319,20 @@ public class Activity_Login extends AppCompatActivity
                 String respStr = EntityUtils.toString(resp.getEntity());
                 JSONArray respJSON = new JSONArray(respStr);
                 clientes = new String[respJSON.length()];
-                almacenes_res = new String[respJSON.length()][4];
+                almacenes_res = new String[respJSON.length()][5];
                 for(int i=0; i<respJSON.length(); i++)	        	{
                     JSONObject obj = respJSON.getJSONObject(i);
                     String _id = obj.getString("equipoAlmacenId");
                     String vch_equipo_almacen_clave = obj.getString("equipoAlmacenClave");
                     String vch_equipo_almacen_descripcion = obj.getString("equipoAlmacenDescripcion");
                     String fk_int_branch = obj.getString("BranchId");
+                    String vch_folio_inventario_diario = obj.getString("folioInventarioDiario");
                     //clientes[i] = "" + idCli + "-" + nombCli + "-" + telefCli;
                     almacenes_res[i][0] = _id;
                     almacenes_res[i][1] = vch_equipo_almacen_clave;
                     almacenes_res[i][2] = vch_equipo_almacen_descripcion;
-                    almacenes_res[i][3] = fk_int_branch;
-                    Log.d("TareaWSListar", "Metodo - for: " + i);
+                    almacenes_res[i][3] = vch_folio_inventario_diario;
+                    almacenes_res[i][4] = fk_int_branch;
                     insertar(i);
                 }
 
@@ -321,7 +340,7 @@ public class Activity_Login extends AppCompatActivity
             }
             catch(Exception ex)
             {
-                Log.e("ServicioRest","Error!", ex);
+                Log.i("ServicioRest","Error!", ex);
                 resul = false;
             }
             return resul;
@@ -329,27 +348,26 @@ public class Activity_Login extends AppCompatActivity
         private void insertar(int i) {
             SQLiteDatabase db = baseDatos.getWritableDatabase();
             ContentValues valores = new ContentValues();
-            if(i == 0){
-                Log.e("===>>>", "Pasé al if" );
+            if (i == 0) {
                 valores.clear();
                 valores.put(cls_Columnas_Catalogo_Almacenes.ID_INT_EQUIPO_ALMACEN_ID, 0);
                 valores.put(cls_Columnas_Catalogo_Almacenes.STR_EQUIPO_ALMACEN_CLAVE, 0);
                 valores.put(cls_Columnas_Catalogo_Almacenes.STR_EQUIPO_ALMACEN_DESCRIPCION, "");
+                valores.put(cls_Columnas_Catalogo_Almacenes.STR_FOLIO_INVENTARIO_DIARIO, "");
                 valores.put(cls_Columnas_Catalogo_Almacenes.FK_INT_BRANCHID, 0);
                 db.insertOrThrow(Tablas.TBL_CATALOGO_ALMACENES, null, valores);
             }
-                Log.d("", " ===>> " + (almacenes_res[i][0]));
-                Log.d("", " ===>> " + (almacenes_res[i][1]));
-                Log.d("", " ===>> " + (almacenes_res[i][2]));
-                Log.d("", " ===>> " + (almacenes_res[i][3]));
-                valores.clear();
-                valores.put(cls_Columnas_Catalogo_Almacenes.ID_INT_EQUIPO_ALMACEN_ID, (Integer.parseInt(almacenes_res[i][0])));
-                valores.put(cls_Columnas_Catalogo_Almacenes.STR_EQUIPO_ALMACEN_CLAVE, almacenes_res[i][1]);
-                valores.put(cls_Columnas_Catalogo_Almacenes.STR_EQUIPO_ALMACEN_DESCRIPCION, almacenes_res[i][2]);
-                valores.put(cls_Columnas_Catalogo_Almacenes.FK_INT_BRANCHID, almacenes_res[i][3]);
-                db.insertOrThrow(Tablas.TBL_CATALOGO_ALMACENES, null, valores);
-
-
+            Log.i("", " ===>> " + (almacenes_res[i][0]));
+            Log.i("", " ===>> " + (almacenes_res[i][1]));
+            Log.i("", " ===>> " + (almacenes_res[i][2]));
+            Log.i("", " ===>> " + (almacenes_res[i][3]));
+            valores.clear();
+            valores.put(cls_Columnas_Catalogo_Almacenes.ID_INT_EQUIPO_ALMACEN_ID, (Integer.parseInt(almacenes_res[i][0])));
+            valores.put(cls_Columnas_Catalogo_Almacenes.STR_EQUIPO_ALMACEN_CLAVE, almacenes_res[i][1]);
+            valores.put(cls_Columnas_Catalogo_Almacenes.STR_EQUIPO_ALMACEN_DESCRIPCION, almacenes_res[i][2]);
+            valores.put(cls_Columnas_Catalogo_Almacenes.STR_FOLIO_INVENTARIO_DIARIO, almacenes_res[i][3]);
+            valores.put(cls_Columnas_Catalogo_Almacenes.FK_INT_BRANCHID, almacenes_res[i][4]);
+            db.insertOrThrow(Tablas.TBL_CATALOGO_ALMACENES, null, valores);
         }
 
         protected void onPostExecute(Boolean result) {
@@ -360,16 +378,22 @@ public class Activity_Login extends AppCompatActivity
 
                 }
                 else {
+                    SharedPreferences preferences = getSharedPreferences("sesion", 0);
+                    preferences.edit().remove("user").commit();
+                    preferences.edit().remove("pass").commit();
                     pDialog.cancel();
                     Toast.makeText(getApplicationContext(),
-                            "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                            "Error al descargar datos del Almacén", Toast.LENGTH_LONG).show();
                     txt_User.requestFocus();
                 }
             }
             else {
+                SharedPreferences preferences = getSharedPreferences("sesion", 0);
+                preferences.edit().remove("user").commit();
+                preferences.edit().remove("pass").commit();
                 pDialog.cancel();
                 Toast.makeText(getApplicationContext(),
-                        "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                        "Error al descargar datos del Almacén", Toast.LENGTH_LONG).show();
                 txt_User.requestFocus();
             }
         }
@@ -385,7 +409,7 @@ public class Activity_Login extends AppCompatActivity
                     new HttpGet("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/getCatalogoTipoEquipo");
             del.addHeader(BasicScheme.authenticate( new UsernamePasswordCredentials("adminLogistica", "Pasa123!"), "UTF-8", false));
             del.setHeader("content-type", "application/json");
-            Log.d("Aquiiiiiii", " ======================================>> " + (almacenes_res[0][0]));
+            Log.i("Aquiiiiiii", " ======================================>> " + (almacenes_res[0][0]));
             try
             {
                 HttpResponse resp = httpClient.execute(del);
@@ -408,7 +432,7 @@ public class Activity_Login extends AppCompatActivity
                     tipos_res[i][3] = tipoEquipoCapacidad;
                     tipos_res[i][4] = tipoEquipoUnidadMedida;
                     tipos_res[i][5] = tipoEquipoMovimiento;
-                    Log.d("TareaWSListar", "Metodo - for: " + i);
+                    Log.i("TareaWSListar", "Metodo - for: " + i);
                     insertar(i);
                 }
 
@@ -416,7 +440,7 @@ public class Activity_Login extends AppCompatActivity
             }
             catch(Exception ex)
             {
-                Log.e("ServicioRest","Error!", ex);
+                Log.i("ServicioRest","Error!", ex);
                 resul = false;
             }
             return resul;
@@ -434,12 +458,12 @@ public class Activity_Login extends AppCompatActivity
                 valores.put(cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_MOVIMIENTO, "");
                 db.insertOrThrow(Tablas.TBL_CATALOGO_TIPO_EQUIPO, null, valores);
             }
-                Log.d("", " ===>> " + (tipos_res[i][0]));
-                Log.d("", " ===>> " + (tipos_res[i][1]));
-                Log.d("", " ===>> " + (tipos_res[i][2]));
-                Log.d("", " ===>> " + (tipos_res[i][3]));
-                Log.d("", " ===>> " + (tipos_res[i][4]));
-                Log.d("", " ===>> " + (tipos_res[i][5]));
+                Log.i("", " ===>> " + (tipos_res[i][0]));
+                Log.i("", " ===>> " + (tipos_res[i][1]));
+                Log.i("", " ===>> " + (tipos_res[i][2]));
+                Log.i("", " ===>> " + (tipos_res[i][3]));
+                Log.i("", " ===>> " + (tipos_res[i][4]));
+                Log.i("", " ===>> " + (tipos_res[i][5]));
                 valores.clear();
                 valores.put(cls_Columnas_Catalogo_Tipo_Equipo.ID_INT_TIPO_EQUIPO_ID, (Integer.parseInt(tipos_res[i][0])));
                 valores.put(cls_Columnas_Catalogo_Tipo_Equipo.STR_TIPO_EQUIPO_CLAVE, tipos_res[i][1]);
@@ -469,7 +493,7 @@ public class Activity_Login extends AppCompatActivity
                         valores.clear();
                         db.execSQL("UPDATE "+ Tablas.TBL_LOGIN_USER +" SET int_select= " + 1 + " WHERE _id= " + clientes_res[0][0]);
 
-                        Log.d("Adios", " ===>> " + (clientes_res[0][1]));
+                        Log.i("Adios", " ===>> " + (clientes_res[0][1]));
                         Intent i = new Intent(Activity_Login.this, Activity_Home.class);
                         startActivity(i);
                     }else {
@@ -480,23 +504,29 @@ public class Activity_Login extends AppCompatActivity
                         /*  Fin validacion del internet    */
 
                         //pDialog.hide();
-                        //pDialog.dismiss();
-                        Log.d("Adios", " ===>> " + (Integer.parseInt(clientes_res[0][2])));
+                        //pDiaLog.iismiss();
+                        Log.i("Adios", " ===>> " + (Integer.parseInt(clientes_res[0][2])));
                         Intent i = new Intent(Activity_Login.this, Activity_Division.class);
                         startActivity(i);
                     }
                 }
                 else {
 
+                    SharedPreferences preferences = getSharedPreferences("sesion", 0);
+                    preferences.edit().remove("user").commit();
+                    preferences.edit().remove("pass").commit();
                     pDialog.cancel();
                     Toast.makeText(getApplicationContext(),
-                            "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                            "Error al descargar datos del Tipo Equipo", Toast.LENGTH_SHORT).show();
                     txt_User.requestFocus();
                 }
             }
             else {
+                SharedPreferences preferences = getSharedPreferences("sesion", 0);
+                preferences.edit().remove("user").commit();
+                preferences.edit().remove("pass").commit();
                 Toast.makeText(getApplicationContext(),
-                        "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                        "Error al descargar datos del Tipo Equipo", Toast.LENGTH_SHORT).show();
                 txt_User.requestFocus();
             }
         }

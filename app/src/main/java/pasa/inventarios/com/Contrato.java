@@ -26,10 +26,11 @@ public class Contrato {
         String INT_SELECT = "int_select";
     }
     interface Columnas_Catalogo_Almacenes {
-        //String ID_INT_EQUIPO_ALMACEN_ID = "id_int_equipo_almacen";
-        String ID_INT_EQUIPO_ALMACEN_ID = "_id";              // Pk
+        String ID = "_id";              // Pk
+        String ID_INT_EQUIPO_ALMACEN_ID = "id_int_equipo_almacen";
         String STR_EQUIPO_ALMACEN_CLAVE = "vch_equipo_almacen_clave";
         String STR_EQUIPO_ALMACEN_DESCRIPCION = "vch_equipo_almacen_descripcion";
+        String STR_FOLIO_INVENTARIO_DIARIO = "vch_folio_inventario_diario";
         String FK_INT_BRANCHID = "fk_int_branch";
     }
     interface Columnas_Catalogo_Tipo_Equipo {
@@ -60,6 +61,9 @@ public class Contrato {
         String STR_FECHA = "vch_fecha";
         String STR_USER = "vch_user";
         String STR_BARCODE = "vch_barcode";
+        String STR_FOLIO_INVENTARIO_DIARIO = "vch_folio_inventario_diario";
+        String INT_EQUIPO_ALMACEN_ID = "equipoAlmacenId";
+        String INT_cerrarInventario= "cerrarInventario";
         String INT_FK_ID = "fk_id";
     }
     // Autoridad del Content Provider

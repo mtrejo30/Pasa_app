@@ -20,33 +20,26 @@ import pasa.inventarios.com.Contrato.*;
 import pasa.inventarios.com.HelperInventarios.*;
 
 public class Activity_Division extends AppCompatActivity {
-
-    // uicontrols
     Spinner spn_Division;
     String arr_Division[] = { ""};
     ArrayAdapter<String> adap_Division;
     String str_Division;
-
     SimpleCursorAdapter user_SpinnerAdapter;
     DbDataSource dataSource;
     HelperInventarios baseDatos;
 
     private static Activity_Division instancia = new Activity_Division();
-
     public Activity_Division obtenerInstancia(Context contexto) {
         if (baseDatos == null) {
             baseDatos = new HelperInventarios(contexto);
         }
         return instancia;
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__division);
-
         obtenerInstancia(getApplicationContext());
-
         dataSource = new DbDataSource(this);
         spn_Division = (Spinner) findViewById(R.id.spn_Division);
         adap_Division = new ArrayAdapter<String>(
@@ -64,38 +57,24 @@ public class Activity_Division extends AppCompatActivity {
                 new int[]{android.R.id.text1},//View para el nombre
                 SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);//Observer para el refresco
         spn_Division.setAdapter(user_SpinnerAdapter);
-
         spn_Division.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
                 Cursor colCur=(Cursor)spn_Division.getSelectedItem();
                 String str_Div = colCur.getString(colCur.getColumnIndex(Contrato.cls_Columnas_Login_User.STR_NAME));
-                Log.e("División", "Item==================: "+ str_Div);
-                String a = colCur.getString(0);
-                String s = colCur.getString(1);
-                String d = colCur.getString(2);
-                String f = colCur.getString(3);
-                String g = colCur.getString(4);
-                String h = colCur.getString(5);
-                String j = colCur.getString(6);
+                Log.i("División", "Item==================: "+ str_Div);
                 str_Division = parent.getItemAtPosition(position).toString();
-                Log.e("", "------------------------------>" + a + "-" + s + "-" + d + "-" + f + "-" + g + "-" + h + "-" + j);
-
+                Log.i("", "---->" + colCur.getString(0) + "-" + colCur.getString(1)
+                        + "-" + colCur.getString(2) + "-" + colCur.getString(3) + "-" + colCur.getString(4)
+                        + "-" + colCur.getString(5) + "-" + colCur.getString(6));
                 SQLiteDatabase db = baseDatos.getWritableDatabase();
                 ContentValues valores = new ContentValues();
                 valores.clear();
                 db.execSQL("UPDATE "+ Tablas.TBL_LOGIN_USER +" SET int_select= " + 0);
                 valores.clear();
-                db.execSQL("UPDATE "+ Tablas.TBL_LOGIN_USER +" SET int_select= " + 1 + " WHERE _id= " + a);
+                db.execSQL("UPDATE "+ Tablas.TBL_LOGIN_USER +" SET int_select= " + 1 + " WHERE _id= " + colCur.getString(0));
                 valores.clear();
-                //valores.put(cls_Columnas_Login_User.INT_SELECT, 1);
-                //db.update(Tablas.TBL_LOGIN_USER, valores, "_id=" + a, null);
-
-                //Log.e("", "================>>>>>>>>>>>>>>" + a + "--" + s + "--" + d + "--" + f + "--" + g + "--" + h + "--" + j);
-
                 if(position == 0){
-                    // Showing selected spinner item
                     Toast.makeText(getApplicationContext(),
                             "Selecciona una opción", Toast.LENGTH_SHORT).show();
                 }
@@ -108,7 +87,6 @@ public class Activity_Division extends AppCompatActivity {
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
     }

@@ -41,10 +41,12 @@ public class HelperInventarios extends SQLiteOpenHelper {
 
         db.execSQL(
                 "CREATE TABLE " + Tablas.TBL_CATALOGO_ALMACENES + "("
-                        + cls_Columnas_Catalogo_Almacenes.ID_INT_EQUIPO_ALMACEN_ID + " INTEGER PRIMARY KEY NOT NULL,"
+                        + cls_Columnas_Catalogo_Almacenes.ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                        + cls_Columnas_Catalogo_Almacenes.ID_INT_EQUIPO_ALMACEN_ID + " INTEGER NOT NULL,"
                         + cls_Columnas_Catalogo_Almacenes.STR_EQUIPO_ALMACEN_CLAVE + " VARCHAR(30) NOT NULL,"
                         + cls_Columnas_Catalogo_Almacenes.STR_EQUIPO_ALMACEN_DESCRIPCION + " VARCHAR(30) NOT NULL,"
                         + cls_Columnas_Catalogo_Almacenes.FK_INT_BRANCHID + " INTEGER NOT NULL,"
+                        + cls_Columnas_Catalogo_Almacenes.STR_FOLIO_INVENTARIO_DIARIO + " VARCHAR(30) NOT NULL,"
                         + " FOREIGN KEY (" + cls_Columnas_Catalogo_Almacenes.FK_INT_BRANCHID + ") REFERENCES " + Tablas.TBL_LOGIN_USER + "(" + cls_Columnas_Login_User.ID_INT_BRANCHID + "))");
 
         db.execSQL(
@@ -81,6 +83,9 @@ public class HelperInventarios extends SQLiteOpenHelper {
                         + cls_Columnas_Inventario_Diario.STR_FECHA + " VARCHAR(30) NOT NULL,"
                         + cls_Columnas_Inventario_Diario.STR_USER + " INTEGER NOT NULL,"
                         + cls_Columnas_Inventario_Diario.STR_BARCODE + " VARCHAR(30) NOT NULL,"
+                        + cls_Columnas_Inventario_Diario.STR_FOLIO_INVENTARIO_DIARIO + " VARCHAR(50) NOT NULL,"
+                        + cls_Columnas_Inventario_Diario.INT_EQUIPO_ALMACEN_ID + " INTEGER NOT NULL,"
+                        + cls_Columnas_Inventario_Diario.INT_cerrarInventario + " INTEGER DEFAULT 0,"
                         + cls_Columnas_Inventario_Diario.INT_FK_ID + " INTEGER NOT NULL,"
                         + " FOREIGN KEY (" + cls_Columnas_Inventario_Diario.INT_FK_ID + ") REFERENCES " + Tablas.TBL_LOGIN_USER + "(" + cls_Columnas_Login_User.ID_INT_BRANCHID + "))");
 

@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingTop="60dp"
+        android:paddingBottom="30dp"
         android:id="@+id/lin_Main"
         android:paddingRight="25dp"
         android:paddingLeft="25dp"
@@ -73,10 +74,10 @@
          <!--android:textColor="@color/colorPrimary"-->
 
              <EditText
-                 android:layout_width="350dp"
+                 android:layout_width="250dp"
                  android:layout_height="wrap_content"
                  android:layout_marginTop="40sp"
-                 android:layout_marginLeft="100sp"
+                 android:layout_marginLeft="90sp"
                  android:id="@+id/editText_BarcodeEscaner"
                  android:shadowColor="@color/colorPrimaryTex"
                  android:textColorHint="@color/colorPrimaryTex" />
@@ -105,7 +106,6 @@
 
  </LinearLayout>
     </ScrollView>
-
      <include
          layout="@layout/app_bar_main"
          android:layout_width="match_parent"

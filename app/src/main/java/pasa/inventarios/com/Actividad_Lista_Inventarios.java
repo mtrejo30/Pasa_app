@@ -77,6 +77,7 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
     TextView txtViewTit;
     TextView txtViewSub;
     ViewGroup finalContainer = null;
+    DbDataSource dataSource;
 
     private static Activity_Login instancia = new Activity_Login();
 
@@ -99,6 +100,14 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
         container = (LinearLayout) findViewById(R.id.lin_AddEditTextEscaner);
         finalContainer = container;
 
+
+        dataSource = new DbDataSource(this);
+
+
+
+
+
+
         btn_Inve1 = (Button) findViewById(R.id.btn_Inve);
         //preparaButtons();
         btn_Inve1.setOnClickListener(new View.OnClickListener() {
@@ -107,9 +116,15 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
                 /*  Inicio validacion del internet    */
                 if (!estaConectado()) {
                 } else {
-                    TareaWSInsertar tare = new TareaWSInsertar();
-                    tare.execute();
+                    //TareaWSInsertar tare = new TareaWSInsertar();
+                    //tare.execute();
+
+                    mtd_dialog_alert();
+
                     prepararLista();
+
+
+
 
                     /*lista = new ArrayList<String[]>();
                     for (int i = 0; i < reciclador.getChildCount(); i++) {
@@ -142,6 +157,48 @@ public class Actividad_Lista_Inventarios extends AppCompatActivity
 */
         prepararLista();
     }
+
+    public void mtd_dialog_alert(){
+        final android.support.v7.app.AlertDialog.Builder dialogo1 = new android.support.v7.app.AlertDialog.Builder(this);
+        dialogo1.setTitle("Advertencia... ");
+        dialogo1.setMessage("El folio: ya está cerrado, elije otro");
+        dialogo1.setIcon(R.drawable.ic_information_black_18dp);
+        dialogo1.setCancelable(false);
+        dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogo1, int id) {
+                mtd_dialog_elije();
+            }
+        });
+        dialogo1.show();
+
+    }
+
+    public void mtd_dialog_elije(){
+
+        int i = 0;
+        final SQLiteDatabase db = baseDatos.getWritableDatabase();
+        Cursor c = db.rawQuery("select vch_folio_inventario_diario from " + HelperInventarios.Tablas.TBL_CATALOGO_ALMACENES + " where vch_folio_inventario_diario <> '' and vch_folio_inventario_diario <> 'INV/EQUIP-000010-072016'", null);
+        final String[] items = new String[c.getCount()];
+        if(c.moveToFirst()){
+            do {
+                items[i] = c.getString(0);
+                Log.e("", items[i]);
+                i++;
+            }while (c.moveToNext());
+        }
+        final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(Actividad_Lista_Inventarios.this);
+        builder.setTitle("Elije el nuevo folio:");
+        //builder.setIcon(R.drawable.ic_information_black_18dp);
+        //builder.setMessage("El folio: " + "INV/EQUIP-000010-072016" + " ya está cerrado, Elije otro");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                Toast.makeText(getApplicationContext(), "El nuevo folio es: \n" + items[item], Toast.LENGTH_LONG).show();
+            }
+        });
+        builder.show();
+
+    }
+
 
 
     private void prepararLista() {

@@ -2,6 +2,7 @@ package pasa.inventarios.com;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,6 +17,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,11 +30,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +58,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import pasa.inventarios.com.Contrato.*;
+
 
 public class Activity_Consulta_Inventario_Diario extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener  {
 
@@ -63,7 +70,11 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
     String str_fecha = "";
     String str_user = "";
     String str_barcode = "";
+    String str_folio = "";
+    String str_id_almacen = "";
+    String str_cerrar = "";
     String str_branch = "";
+    String str_folio_cerrado = "";
     View addView;
     TextView txtViewTit;
     TextView txtViewSub;
@@ -73,16 +84,29 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
     ImageButton btn_search;
     Button btn_show_all;
     LinearLayout container;
+    boolean result1 = false;
+    boolean val11 = true;
+    boolean val12 = true;
+    boolean val13 = true;
+    boolean val14 = true;
     boolean result = false;
-    boolean val1 = true;
-    boolean val2 = true;
-    boolean val3 = true;
+    boolean val1 = false;
+    boolean val2 = false;
+    boolean val3 = false;
+    boolean val4 = false;
     private DatePickerDialog fromDatePickerDialog;
     private SimpleDateFormat dateFormatter;
     private AdaptadorInventarios adaptador;
     boolean bool_query_inv = false;
     boolean bool_query_inv_diario = false;
     DbDataSource dataSource;
+    TextView txtViewFolio_Inv;
+    SimpleCursorAdapter genreSpinnerAdapter2;
+    Spinner spn_Almacen;
+    String str_Equipo_Almacen = "";
+    String str_Folio_Inventario_Diario = "";
+    int id_Branch;
+    int id_Equipo_Almacen;
 
     HelperInventarios baseDatos;
 
@@ -130,6 +154,8 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
         container = (LinearLayout) findViewById(R.id.lin_AddEditTextEscaner);
         str_divisionTV = (TextView) findViewById(R.id.txtView_Division);
 
+        txtViewFolio_Inv = (TextView) findViewById(R.id.txtView_Folio);
+
         dateFormatter = new SimpleDateFormat("dd/MMMM/yyyy", Locale.US);
         str_fechaET = (EditText) findViewById(R.id.editText_Fecha);
         str_fechaET.setInputType(InputType.TYPE_NULL);
@@ -141,6 +167,35 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
             finalContainer.removeAllViews();
         }
 
+        spn_Almacen = (Spinner) findViewById(R.id.spn_Almacen);
+
+        genreSpinnerAdapter2 = new SimpleCursorAdapter(
+                this,
+                android.R.layout.simple_spinner_item,//Layout simple
+                dataSource.getCatAlmacenes(),//Todos los registros
+                new String[]{Contrato.cls_Columnas_Catalogo_Almacenes.
+                        STR_EQUIPO_ALMACEN_DESCRIPCION},//Mostrar solo el nombre
+                new int[]{android.R.id.text1},//View para el nombre
+                SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);//Observer para el refresco
+        spn_Almacen.setAdapter(genreSpinnerAdapter2);
+        spn_Almacen.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Cursor colCur=(Cursor)spn_Almacen.getSelectedItem();
+                str_Folio_Inventario_Diario = colCur.getString(colCur.getColumnIndex(
+                        Contrato.cls_Columnas_Catalogo_Almacenes.STR_FOLIO_INVENTARIO_DIARIO));
+                String str_Bran = colCur.getString(colCur.getColumnIndex(Contrato.
+                        cls_Columnas_Catalogo_Almacenes.FK_INT_BRANCHID));
+                str_Equipo_Almacen = str_Folio_Inventario_Diario;
+                txtViewFolio_Inv.setText(str_Folio_Inventario_Diario);
+                id_Branch = Integer.parseInt(str_Bran);
+                id_Equipo_Almacen = (int) id;
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
         btn_Sincronizar = (Button) findViewById(R.id.btn_Sincronizacion);
         btn_Sincronizar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,7 +203,7 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
 
                 if (!estaConectado()) {
                 } else {
-                    TareaWSInsertar tare = new TareaWSInsertar();
+                    TareaWSInsertarInventarioDiario tare = new TareaWSInsertarInventarioDiario();
                     tare.execute();
                     prepararLista();
                 }
@@ -162,13 +217,15 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
             @Override
             public void onClick(View v) {
                 //Toast.makeText(getApplicationContext(), "Elije una fecha" + str_fechaET.getText().toString(), Toast.LENGTH_SHORT).show();
-
-                if (str_fechaET.getText().toString().length() == 0) {
-                    Toast.makeText(getApplicationContext(), "Elije una fecha", Toast.LENGTH_SHORT).show();
+                if (txtViewFolio_Inv.getText().toString().length() != 0) {
+                    if (str_fechaET.getText().toString().length() == 0) {
+                        Toast.makeText(getApplicationContext(), "Elije una fecha", Toast.LENGTH_SHORT).show();
+                    } else {
+                        mtd_Query_date();
+                    }
                 } else {
-                    mtd_Query_date();
+                    Toast.makeText(getApplicationContext(), "Elije un almacén que cuente con un folio", Toast.LENGTH_LONG).show();
                 }
-
             }
         });
 
@@ -193,7 +250,7 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
     private void mtd_Query_date() {
         finalContainer.removeAllViews();
         final SQLiteDatabase db = baseDatos.getWritableDatabase();
-        Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO + " where vch_fecha = " + "'" + str_fechaET.getText().toString() + "'", null);// vch_fecha
+        Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO + " where vch_fecha = " + "'" + str_fechaET.getText().toString() + "' and vch_folio_inventario_diario = '" + txtViewFolio_Inv.getText().toString() + "'", null);// vch_fecha
         if (c.moveToFirst()) {
             do {
                 str_id = c.getString(0);
@@ -202,20 +259,21 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
                 str_user = c.getString(3);
                 str_barcode = c.getString(4);
                 str_branch = c.getString(5);
-                Log.e("", "==>>     " + str_id + "--" + str_division + "--" + str_fecha + "--" + str_user + "--" + str_barcode + "--" + str_branch);
+                Log.i("", "==>>     " + str_id + "--" + str_division + "--" + str_fecha + "--" + str_user + "--" + str_barcode + "--" + str_branch);
                 LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 addView = layoutInflater.inflate(R.layout.listitem_titular, null);
                 txtViewTit = (TextView) addView.findViewById(R.id.LblTitulo);
                 txtViewTit.setText(str_barcode);
                 txtViewSub = (TextView) addView.findViewById(R.id.LblSubTitulo);
-                txtViewSub.setText(str_user);
+
+                txtViewSub.setText(str_user + " -- " + c.getString(5));
                 btn_delete_item = (Button) addView.findViewById(R.id.btn_delete_item);
                 final String bar = txtViewTit.getText().toString();
                 btn_delete_item.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Toast.makeText(getApplicationContext(), "El código " + bar + " se eliminó correctamente", Toast.LENGTH_SHORT).show();
-                        db.execSQL("DELETE FROM " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO + " WHERE " + Contrato.cls_Columnas_Inventario_Diario.STR_BARCODE + "=" + bar);
+                        db.execSQL("DELETE FROM " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO + " WHERE " + Contrato.cls_Columnas_Inventario_Diario.STR_BARCODE + " = '" + bar + "'");
                         prepararLista();
                     }
                 });
@@ -232,7 +290,7 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
     }
 
     public void mtd_Query_Tbl_Login_User() {
-        Log.e("=========>>>>>>>>", "  Soy el metodo mtd_Query_Tbl_Login_User");
+        Log.i("=========>>>>>>>>", "  Soy el metodo mtd_Query_Tbl_Login_User");
         SQLiteDatabase db = baseDatos.getWritableDatabase();
         Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_LOGIN_USER + " where int_select = 1", null);
         if (c.moveToFirst()) {
@@ -248,7 +306,7 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
                 str_division = c.getString(4);
                 str_valida = c.getString(5);
                 str_bandera = c.getString(6);
-                Log.e("", "==>>     " + str_branch + "--" + str_user + "--" + str_pass + "--" + str_app + "--" + str_division + "--" + str_valida + "--" + str_bandera);
+                Log.i("", "==>>     " + str_branch + "--" + str_user + "--" + str_pass + "--" + str_app + "--" + str_division + "--" + str_valida + "--" + str_bandera);
                 str_divisionTV.setText(str_division);
             } while (c.moveToNext());
         }
@@ -284,14 +342,14 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
                 str_fecha = c.getString(2);
                 str_user = c.getString(3);
                 str_barcode = c.getString(4);
-                str_branch = c.getString(5);
-                Log.e("", "==>>     " + str_id + "--" + str_division + "--" + str_fecha + "--" + str_user + "--" + str_barcode + "--" + str_branch);
+                str_branch = c.getString(6);
+                Log.i("", str_id + "--" + str_division + "--" + str_fecha + "--" + str_user + "--" + str_barcode + c.getString(5) + "--" + str_branch);
                 LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 addView = layoutInflater.inflate(R.layout.listitem_titular, null);
                 txtViewTit = (TextView) addView.findViewById(R.id.LblTitulo);
                 txtViewTit.setText(str_barcode);
                 txtViewSub = (TextView) addView.findViewById(R.id.LblSubTitulo);
-                txtViewSub.setText(str_user);
+                txtViewSub.setText(str_user + " -- " + c.getString(5));
                 btn_delete_item = (Button) addView.findViewById(R.id.btn_delete_item);
                 final String bar = txtViewTit.getText().toString();
                 btn_delete_item.setOnClickListener(new View.OnClickListener() {
@@ -331,7 +389,7 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
                 } else {
                     if(finalContainer.getChildCount() != 0){
                         //Toast.makeText(getApplicationContext(), "Hay " + finalContainer.getChildCount(), Toast.LENGTH_SHORT).show();
-                        TareaWSInsertar tare = new TareaWSInsertar();
+                        TareaWSInsertarInventarioDiario tare = new TareaWSInsertarInventarioDiario();
                         tare.execute();
                     }else{
                         //Toast.makeText(getApplicationContext(), "No hay", Toast.LENGTH_SHORT).show();
@@ -390,7 +448,7 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
             boolean bool_query_inv_diario1 = mtd_consulta_tbl_inventario_diario();
 
             //Toast.makeText(getApplicationContext(), "Datos " + bool_query_inv1 + bool_query_inv_diario1, Toast.LENGTH_SHORT).show();
-            Log.e("", "Datos " + bool_query_inv1 + bool_query_inv_diario1);
+            Log.i("", "Datos " + bool_query_inv1 + bool_query_inv_diario1);
             if(bool_query_inv1 || bool_query_inv_diario1){
                 mtd_alert_dialog(bool_query_inv1, bool_query_inv_diario1);
             }else{
@@ -441,16 +499,17 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
             client.disconnect();
         }
     */
-    private class TareaWSInsertar extends AsyncTask<String, Integer, Boolean> {
+    private class TareaWSInsertarInventarioDiario extends AsyncTask<String, Integer, Boolean> {
         protected Boolean doInBackground(String... params) {
             String message;
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/altaEquiposInsertReporte");
             post.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials("adminLogistica", "Pasa123!"), "UTF-8", false));
             try {
-                Log.e("=========>>>>>>>>", "  Soy el metodo TareaWSInsertar - Inventario Diario");
+                Log.i("=========>>>>>>>>", "  Soy el metodo TareaWSInsertar - Inventario Diario");
                 SQLiteDatabase db = baseDatos.getWritableDatabase();
                 Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO, null);
+                db.execSQL("UPDATE tbl_inventario_diario SET cerrarInventario = 1 where _id = (SELECT MAX(_id) from tbl_inventario_diario)");
                 if (c.moveToFirst()) {
                     LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     addView = layoutInflater.inflate(R.layout.listitem_titular, null);
@@ -463,12 +522,21 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
                         str_fecha = c.getString(2);
                         str_user = c.getString(3);
                         str_barcode = c.getString(4);
-                        str_branch = c.getString(5);
-                        Log.e("Muestra", "==>>     " + str_id + "--" + str_division + "--" + str_fecha + "--" + str_user + "--" + str_barcode + "--" + str_branch + "--" + c.getCount());
+                        str_folio = c.getString(5);
+                        str_id_almacen = c.getString(6);
+                        str_cerrar = c.getString(7);
+                        str_branch = c.getString(8);
+
+                        //13--GIN MONTERREY--25/julio/2016--4400170--hjjk--INV/EQUIP-000009-072016--9
+                        Log.i("Muestra", "==>>     " + str_id + "--" + str_division + "--" + str_fecha + "--" + str_user + "--" + str_barcode + "--" + str_folio + "--" + str_id_almacen + "--" + str_cerrar + "--" + str_branch);
                         ////////////////////////////////////////////////
                         object.put("equipoFolio", str_barcode.trim());
                         object.put("branchId", str_branch.trim());
                         object.put("user", str_user.trim());
+                        object.put("equipoAlmacenId", str_id_almacen.trim());
+                        object.put("folioInventarioDiario", str_folio.trim());
+                        object.put("cerrarInventario", str_cerrar);
+
                         message = object.toString();
                         post.setEntity(new StringEntity(message, "UTF8"));
                         post.setHeader("Content-type", "application/json");
@@ -476,9 +544,9 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
                         if (resp != null) {
                             if (resp.getStatusLine().getStatusCode() == 204) {
                                 result = true;
-                                Log.e("=====>>>>>", " Soy IF ");
+                                Log.i("=====>>>>>", " Soy IF ");
                             } else {
-                                Log.e("=====>>>>>", " Soy ELSE " + resp.getStatusLine().getStatusCode());
+                                Log.i("=====>>>>>", " Soy ELSE " + resp.getStatusLine().getStatusCode());
                             }
                         }
                         String respuesta = "Respuesta default";
@@ -488,32 +556,37 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
                         String[] str_validar_msj = respuesta.split(" ");
                         String str_last1 = str_validar_msj[0] + " " + str_validar_msj[1] + " " + str_validar_msj[2];
                         String str_last2 = str_validar_msj[str_validar_msj.length - 1];
-                        Log.d("", " =====>>>>> :\"" + str_last1 + "\"");
-                        Log.d("", " =====>>>>> :\"" + str_last2 + "\"");
+                        Log.i("", " =====>>>>> :\"" + str_last1 + "\"");
+                        Log.i("", " =====>>>>> :\"" + str_last2 + "\"");
                         if (str_last1.equals("\"Se registro Correctamente")) {
                             String[] args = new String[]{str_id};
                             db.execSQL("DELETE FROM tbl_inventario_diario WHERE _id=?", args);
                         } else {
-                            val1 = false;
+                            val11 = false;
                             if (str_last2.equals("Existente\"")) {
-                                val2 = false;
+                                val12 = false;
                             } else {
-                                val3 = false;
+                                if (str_last2.equals("Cerrado\"")) {
+                                    val14 = false;
+                                    str_folio_cerrado = str_folio;
+                                }else{
+                                    val13 = false;
+                                }
                             }
                         }
 
-                        Log.e("getEntity.getContent", "=====>>>>> " + respuesta);
-                        Log.e("Status", "=====>>>>> " + resp.getStatusLine().getStatusCode());
-                        Log.e("Status message", "=====>>>>>" + message);
-                        Log.e("resp.getStatusLine", "=====>>>>>" + resp.getStatusLine().toString());
+                        Log.i("getEntity.getContent", "=====>>>>> " + respuesta);
+                        Log.i("Status", "=====>>>>> " + resp.getStatusLine().getStatusCode());
+                        Log.i("Status message", "=====>>>>>" + message);
+                        Log.i("resp.getStatusLine", "=====>>>>>" + resp.getStatusLine().toString());
                         result = true;
                     } while (c.moveToNext());
                 } else {
                     Toast.makeText(getApplicationContext(), "No hay datos", Toast.LENGTH_SHORT);
                 }
             } catch (Exception ex) {
-                Log.e("ServicioRest", "Error=============>>>>!", ex);
-                Log.d("TareaWSInsertar: ", "catch(Exception ex)");
+                Log.i("ServicioRest", "Error=============>>>>!", ex);
+                Log.i("TareaWSInsertar: ", "catch(Exception ex)");
                 result = false;
             }
             return result;
@@ -531,19 +604,26 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
 
         protected void onPostExecute(Boolean result) {
             if (result) {
-                Log.e("onPostExecute", "=========" + finalContainer.getChildCount());
+                Log.i("onPostExecute", "=========" + finalContainer.getChildCount());
                 btn_Sincronizar.setBackgroundColor(Color.parseColor("#60000000"));
                 btn_Sincronizar.setEnabled(false);
             }
             //Toast.makeText(getApplicationContext(), "Entré al onPostExecute", Toast.LENGTH_SHORT).show();
-            if (val1) {
+            if (val11) {
                 Toast.makeText(getApplicationContext(), "Todos los datos se sincronizaron de manera correcta", Toast.LENGTH_SHORT).show();
             } else {
-                if (!val2) {
+                if (!val12) {
                     Toast.makeText(getApplicationContext(), "Folios existentes con el mismo branch y usuario", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (!val3) {
+                    if (!val13) {
                         Toast.makeText(getApplicationContext(), "Ha ocurrido un error, repórtelo con la empresa", Toast.LENGTH_LONG).show();
+                    } else{
+                        if(!val14) {
+                            //Toast.makeText(getApplicationContext(), "Éste folio ya está cerrado", Toast.LENGTH_LONG).show();
+                            //mtd_dialog_folio(str_folio_cerrado);
+                            mtd_dialog_alert(str_folio_cerrado);
+
+                        }
                     }
                 }
             }
@@ -641,7 +721,22 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
                 }
                 else {
                     mtd_sincronizar_y_salir(bool_query_inv1, bool_query_inv_diario1);
-                    mtd_salir_sesion();
+                    if(!val1 || val2 || val3 || val4 || !val11 || !val12 || !val13 || !val14) {
+                        Toast.makeText(getApplicationContext(), "Hay registros que no se pudieron sincronizar", Toast.LENGTH_LONG).show();
+
+                        val11 = true;
+                        val12 = true;
+                        val13 = true;
+                        val14 = true;
+
+                        val1 = false;
+                        val2 = false;
+                        val3 = false;
+                        val4 = false;
+                    }else {
+                        mtd_salir_sesion();
+
+                    }
                     //mtd_cerrar_sesion();
                 }
                 //Toast.makeText(getApplicationContext(), "Sincronizar y salir", Toast.LENGTH_LONG).show();
@@ -652,8 +747,6 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
 
                 mtd_borrar_y_salir();
                 mtd_salir_sesion();
-                //mtd_cerrar_sesion();
-                //Toast.makeText(getApplicationContext(), "Salir sin sincronizar", Toast.LENGTH_LONG).show();
             }
         });
         dialogo1.setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -695,37 +788,33 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
     }
 
     public boolean mtd_consulta_inventario() {
-        Log.e("", " ==>> -------------------------     mtd_consulta_inventario");
+        Log.i("", " ==>> -------------------------     mtd_consulta_inventario");
         final SQLiteDatabase db = baseDatos.getWritableDatabase();
         Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.INVENTARIO, null);
         if (c.moveToFirst()) {
-            Log.e("", "==>>     " + c.getString(0) + "--" + c.getString(1) + "--" + c.getString(2) + "--" + c.getString(3) + "--" + c.getString(4) + "--" + c.getString(6) + "--" + c.getString(7) + "--" + c.getString(8));
+            Log.i("", "==>>     " + c.getString(0) + "--" + c.getString(1) + "--" + c.getString(2) + "--" + c.getString(3) + "--" + c.getString(4) + "--" + c.getString(6) + "--" + c.getString(7) + "--" + c.getString(8));
             bool_query_inv = true;
-            //Toast.makeText(getApplicationContext(), "Si hay datos " + bool_query_inv, Toast.LENGTH_SHORT).show();
             do {
             } while (c.moveToNext());
         } else {
             bool_query_inv = false;
-            //Toast.makeText(getApplicationContext(), "No hay datos " + bool_query_inv, Toast.LENGTH_SHORT).show();
         }
         return bool_query_inv;
     }
 
     public boolean mtd_consulta_tbl_inventario_diario() {
-        Log.e("", "==>>-------------------------     mtd_consulta_tbl_inventario_diario");
+        Log.i("", "==>>-------------------------     mtd_consulta_tbl_inventario_diario");
         final SQLiteDatabase db = baseDatos.getWritableDatabase();
         Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO, null);
         if (c.moveToFirst()) {
-            Log.e("", "==>>     " + c.getString(0) + "--" + c.getString(1) + "--"
+            Log.i("", "==>>     " + c.getString(0) + "--" + c.getString(1) + "--"
                     + c.getString(2) + "--" + c.getString(3) + "--" + c.getString(4)
                     + "--" + c.getString(5));
             bool_query_inv_diario = true;
-            //Toast.makeText(getApplicationContext(), "Si hay datos " + bool_query_inv_diario, Toast.LENGTH_SHORT).show();
             do {
             } while (c.moveToNext());
         } else {
             bool_query_inv_diario = false;
-            //Toast.makeText(getApplicationContext(), "No hay datos " + bool_query_inv_diario, Toast.LENGTH_SHORT).show();
         }
         return bool_query_inv_diario;
     }
@@ -741,67 +830,174 @@ public class Activity_Consulta_Inventario_Diario extends AppCompatActivity imple
         startActivity(intent);
     }
 
-    private class TareaWSInsertarInventarioDiario extends AsyncTask<String, Integer, Boolean> {
-        boolean result = false;
-        protected Boolean doInBackground(String... params) {
-            String message;
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpPost post = new HttpPost("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/altaEquiposInsertReporte");
-            post.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials("adminLogistica", "Pasa123!"), "UTF-8", false));
-            try {
-                SQLiteDatabase db = baseDatos.getWritableDatabase();
-                Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO, null);
-                if (c.moveToFirst()) {
-                    JSONObject object = new JSONObject();
-                    do {
-                        object.put("equipoFolio", c.getString(4).trim());
-                        object.put("branchId", c.getString(5).trim());
-                        object.put("user", c.getString(3).trim());
-                        message = object.toString();
-                        post.setEntity(new StringEntity(message, "UTF8"));
-                        post.setHeader("Content-type", "application/json");
-                        httpClient.execute(post);
-                        result = true;
-                    } while (c.moveToNext());
-                } else { }
-            } catch (Exception ex) { result = false; }
-            return result;
-        }
-        protected void onPostExecute(Boolean result) { if (result){} }
-    }
 
-    private class TareaWSInsertarInventario extends AsyncTask<String,Integer,Boolean> {
-        boolean result = false;
+
+
+    private class TareaWSInsertarInventario extends AsyncTask<String, Integer, Boolean> {
+        public int contador = 0;
+
         protected Boolean doInBackground(String... params) {
             String message;
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/altaEquipos");
             post.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials("adminLogistica", "Pasa123!"), "UTF-8", false));
+            //post.setHeader("content-type", "application/json");
             try {
+                String str_equipo_folio = "";
+                String str_equipo_RFID = "";
+                String str_tipo_Equipo_Id = "";
+                String str_equipo_Almacen_Id = "";
+                String str_equipo_Estatus_Id = "";
+                String str_equipo_Propio = "";
+                String str_branch_Id = "";
                 SQLiteDatabase db = baseDatos.getWritableDatabase();
                 Cursor c = db.rawQuery("Select equipo_Folio, equipo_RFID, tipo_Equipo_Id, equipo_Almacen_Id, equipo_Estatus_Id, equipo_Propio, branch_Id from " + HelperInventarios.Tablas.INVENTARIO, null);
                 if (c.moveToFirst()) {
                     JSONObject object = new JSONObject();
+                    ContentValues valores = new ContentValues();
+                    HttpResponse resp;
                     do {
-                        object.put("equipoFolio", c.getString(0));
+                        str_equipo_folio = c.getString(0);
+                        str_equipo_RFID = c.getString(1);
+                        str_tipo_Equipo_Id = c.getString(2);
+                        str_equipo_Almacen_Id = c.getString(3);
+                        str_equipo_Estatus_Id = c.getString(4);
+                        str_equipo_Propio = c.getString(5);
+                        str_branch_Id = c.getString(6);
+                        object.put("equipoFolio", str_equipo_folio);
                         object.put("equipoRFID", "");
-                        object.put("tipoEquipoId", c.getString(2));
-                        object.put("equipoAlmacenId", c.getString(3));
-                        object.put("equipoEstatusId", c.getString(4));
-                        object.put("equipoPropio", c.getString(5));
-                        object.put("branchId", c.getString(6));
+                        object.put("tipoEquipoId", str_tipo_Equipo_Id);
+                        object.put("equipoAlmacenId", str_equipo_Almacen_Id);
+                        object.put("equipoEstatusId", str_equipo_Estatus_Id);
+                        object.put("equipoPropio", str_equipo_Propio);
+                        object.put("branchId", str_branch_Id);
                         message = object.toString();
                         post.setEntity(new StringEntity(message, "UTF8"));
                         post.setHeader("Content-type", "application/json");
-                        httpClient.execute(post);
+                        resp = httpClient.execute(post);
+                        if (resp != null) {
+                            if (resp.getStatusLine().getStatusCode() == 204)
+                                result = true;
+                        }
+                        String respuesta = EntityUtils.toString(resp.getEntity());
+                        String[] str_validar_msj = respuesta.split(" ");
+                        String str_last2 = str_validar_msj[str_validar_msj.length - 1];
+                        if (str_last2.equals("correctamente\"")) {
+                            Log.e("Mensaje: correctamente", str_last2);
+                            //db.execSQL("DELETE FROM inventario WHERE equipo_Folio = '" + str_equipo_folio + "'", null);
+                            db.execSQL("DELETE FROM " + HelperInventarios.Tablas.INVENTARIO + " WHERE " + Contrato.ColumnasPasa.EQUIPO_FOLIO + " = '" + str_equipo_folio + "'");
+                            val1 = true;
+                        } else {
+                            val1 = false;
+                            if (str_last2.equals("registrado\"")) {
+                                Log.e("Mensaje: registrado", str_last2);
+                                val2 = true;
+                            } else {
+                                if(str_last2.equals("Existe\"")){
+                                    val4 = true;
+                                }else {
+                                    Log.e("Mensaje: error", str_last2);
+                                    val3 = true;
+                                }
+                            }
+                        }
                         result = true;
                     } while (c.moveToNext());
-                } else { }
-            } catch (Exception ex) { result = false; }
+                } else {
+                    Toast.makeText(getApplicationContext(), "No hay datos", Toast.LENGTH_SHORT);
+                }
+            } catch (Exception ex) {
+                Log.i("ServicioRest", "Error=============>>>>!", ex);
+                Log.i("TareaWSInsertar: ", "catch(Exception ex)");
+                result = false;
+            }
             return result;
         }
-        protected void onPostExecute(Boolean result) { if (result) { } }
+
+        public void showToast(String toast) {
+            toast = toast.substring(1, toast.length() - 1);
+            final String finalToast = toast;
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(Activity_Consulta_Inventario_Diario.this, finalToast, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+            }
+            if (val1) {
+                Toast.makeText(getApplicationContext(), "Todos los datos se sincronizaron de manera correcta", Toast.LENGTH_LONG).show();
+            } else {
+                if (val2) {
+                    Toast.makeText(getApplicationContext(), "Folios existentes con el mismo branch y usuario", Toast.LENGTH_LONG).show();
+                } else {
+                    if(val4){
+                        Toast.makeText(getApplicationContext(), "El almacén no existe en la base de datos", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Ha ocurrido un error, repórtelo con la empresa", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        }
     }
 
 
+
+
+    public void mtd_dialog_alert(final String str_folio_cerrado){
+        final android.support.v7.app.AlertDialog.Builder dialogo1 = new android.support.v7.app.AlertDialog.Builder(this);
+        dialogo1.setTitle("Advertencia... ");
+        dialogo1.setMessage("El folio de inventario: " + str_folio_cerrado + " ya está cerrado, los registros que contienen este folio necesitan ser cambiados por otro folio para realizar la sincronización correcta");
+        dialogo1.setIcon(R.drawable.ic_information_black_18dp);
+        dialogo1.setCancelable(false);
+        dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogo1, int id) {
+                mtd_dialog_elije(str_folio_cerrado);
+            }
+        });
+        dialogo1.show();
+    }
+
+
+    public void mtd_dialog_elije(final String str_folio_cerrado){
+
+        int i = 0;
+        final SQLiteDatabase db = baseDatos.getWritableDatabase();
+        Cursor c = db.rawQuery("select vch_folio_inventario_diario from " + HelperInventarios.Tablas.TBL_CATALOGO_ALMACENES + " where vch_folio_inventario_diario <> '' and vch_folio_inventario_diario <> '" + str_folio_cerrado + "'", null);
+        final String[] items = new String[c.getCount()];
+        if(c.moveToFirst()){
+            do {
+                items[i] = c.getString(0);
+                Log.i("", items[i]);
+                i++;
+            }while (c.moveToNext());
+        }
+        final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(Activity_Consulta_Inventario_Diario.this);
+        builder.setTitle("Elije el nuevo folio:");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                Toast.makeText(getApplicationContext(), "El nuevo folio es: \n" + items[item], Toast.LENGTH_LONG).show();
+                mtd_update_folio_cerrado(str_folio_cerrado, items[item]);
+            }
+        });
+        builder.show();
+    }
+    public void mtd_update_folio_cerrado(String str_folio_cerrado, String item){
+        SQLiteDatabase db = baseDatos.getWritableDatabase();
+        ContentValues valores = new ContentValues();
+        valores.clear();
+        db.execSQL("UPDATE "+ HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO +" SET cerrarInventario = " + 0);
+        db.execSQL("UPDATE "+ HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO
+                +" SET vch_folio_inventario_diario = '" + item
+                + "', equipoAlmacenId = (select " + cls_Columnas_Catalogo_Almacenes.ID_INT_EQUIPO_ALMACEN_ID + " from "
+                + HelperInventarios.Tablas.TBL_CATALOGO_ALMACENES
+                + " where " + cls_Columnas_Catalogo_Almacenes.STR_FOLIO_INVENTARIO_DIARIO + " = '" + item
+                + "') where vch_folio_inventario_diario = '"
+                + str_folio_cerrado + "'");
+
+        //equipoAlmacenId
+        prepararLista();
+    }
 }
