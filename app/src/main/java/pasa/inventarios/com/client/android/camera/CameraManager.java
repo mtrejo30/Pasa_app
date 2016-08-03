@@ -63,6 +63,7 @@ public final class CameraManager {
      * Preview frames are delivered here, which we pass on to the registered handler. Make sure to
      * clear the handler so it will only receive one message.
      */
+
     private final PreviewCallback previewCallback;
 
     public CameraManager(Context context) {
@@ -70,7 +71,6 @@ public final class CameraManager {
         this.configManager = new CameraConfigurationManager(context);
         previewCallback = new PreviewCallback(configManager);
     }
-
     /**
      * Opens the camera driver and initializes the hardware parameters.
      *
@@ -254,33 +254,39 @@ public final class CameraManager {
      *
      * @return {@link Rect} expressing barcode scan area in terms of the preview size
      */
-    public synchronized Rect getFramingRectInPreview() {
-        if (framingRectInPreview == null) {
-            Rect framingRect = getFramingRect();
-            if (framingRect == null) {
-                return null;
+    //public synchronized Rect getFramingRectInPreview(int sensor) {
+        public synchronized Rect getFramingRectInPreview(int sensor) {
+            if (framingRectInPreview == null) {
+                Log.i("getFramingRectInPreview", "if (framingRectInPreview == null)");
+                Rect framingRect = getFramingRect();
+                if (framingRect == null) {
+                    Log.i("getFramingRectInPreview", "framingRect");
+                    return null;
+                }
+                Rect rect = new Rect(framingRect);
+                Point cameraResolution = configManager.getCameraResolution();
+                Point screenResolution = configManager.getScreenResolution();
+                if (cameraResolution == null || screenResolution == null) {
+                    // Called early, before init even finished
+                    Log.i("getFramingRectInPreview", "cameraResolution");
+                    return null;
+                }
+
+                if (sensor == 1) {
+                    rect.left = rect.left * cameraResolution.x / screenResolution.x;
+                    rect.right = rect.right * cameraResolution.x / screenResolution.x;
+                    rect.top = rect.top * cameraResolution.y / screenResolution.y;
+                    rect.bottom = rect.bottom * cameraResolution.y / screenResolution.y;
+                } else {
+                    rect.left = rect.left * cameraResolution.y / screenResolution.x;
+                    rect.right = rect.right * cameraResolution.y / screenResolution.x;
+                    rect.top = rect.top * cameraResolution.x / screenResolution.y;
+                    rect.bottom = rect.bottom * cameraResolution.x / screenResolution.y;
+                }
+                framingRectInPreview = rect;
             }
-            Rect rect = new Rect(framingRect);
-            Point cameraResolution = configManager.getCameraResolution();
-            Point screenResolution = configManager.getScreenResolution();
-            if (cameraResolution == null || screenResolution == null) {
-                // Called early, before init even finished
-                return null;
-            }
-      /*
-        rect.left = rect.left * cameraResolution.y / screenResolution.x;
-        rect.right = rect.right * cameraResolution.y / screenResolution.x;
-        rect.top = rect.top * cameraResolution.x / screenResolution.y;
-        rect.bottom = rect.bottom * cameraResolution.x / screenResolution.y;
-      */
-            rect.left = rect.left * cameraResolution.x / screenResolution.x;
-            rect.right = rect.right * cameraResolution.x / screenResolution.x;
-            rect.top = rect.top * cameraResolution.y / screenResolution.y;
-            rect.bottom = rect.bottom * cameraResolution.y / screenResolution.y;
-            framingRectInPreview = rect;
+            return framingRectInPreview;
         }
-        return framingRectInPreview;
-    }
 
 
     /**
@@ -330,8 +336,9 @@ public final class CameraManager {
      * @return A PlanarYUVLuminanceSource instance.
      */
 
-    public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height) {
-        Rect rect = getFramingRectInPreview();
+    public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height, int sensor) {
+        // Escaneo
+        Rect rect = getFramingRectInPreview(sensor);
         if (rect == null) {
             return null;
         }

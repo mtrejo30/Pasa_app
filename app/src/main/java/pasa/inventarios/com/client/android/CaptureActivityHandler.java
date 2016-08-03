@@ -67,6 +67,7 @@ public final class CaptureActivityHandler extends Handler {
                            String characterSet,
                            CameraManager cameraManager) {
         this.activity = activity;
+        //Escaneo
         decodeThread = new DecodeThread(activity, decodeFormats, baseHints, characterSet,
                 new ViewfinderResultPointCallback(activity.getViewfinderView()));
         decodeThread.start();

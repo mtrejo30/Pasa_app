@@ -183,7 +183,7 @@ public class Activity_Login extends AppCompatActivity
 
             /*  Inicio validacion del internet    */
             pDialog = new ProgressDialog(Activity_Login.this);
-            pDialog.setMessage("Autenticando...");
+            pDialog.setMessage("Autentificando...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
             pDialog.show();

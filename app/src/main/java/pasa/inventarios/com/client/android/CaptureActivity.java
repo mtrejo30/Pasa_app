@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2008 ZXing authors
  *
@@ -92,6 +93,11 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private CameraManager cameraManager;
     private CaptureActivityHandler handler;
     private Result savedResultToShow;
+
+    public ViewfinderView getViewfinderView() {
+        return viewfinderView;
+    }
+
     private ViewfinderView viewfinderView;
     private TextView statusView;
     private View resultView;
@@ -108,6 +114,17 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private InactivityTimer inactivityTimer;
     private BeepManager beepManager;
     private AmbientLightManager ambientLightManager;
+    //public int sensor = -1;
+
+    private int sensor_orientacion;
+    public int getSensor_orientacion() {
+        return sensor_orientacion;
+    }
+
+    public void setSensor_orientacion(int sensor_orientacion) {
+        this.sensor_orientacion = sensor_orientacion;
+    }
+
 
     public CaptureActivity() {
 
@@ -115,12 +132,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     }
 
-    ViewfinderView getViewfinderView() {
-
-        Log.i("CaptureActivity --- ", "getViewfinderView()");
-
-        return viewfinderView;
-    }
 
     public Handler getHandler() {
 
@@ -141,8 +152,15 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
         Log.i("CaptureActivity --- ", "onCreate()");
 
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            //sensor = 0;
+        }else{
+            //sensor = 1;
+        }
 
         super.onCreate(icicle);
+
+        Toast.makeText(this, "Orientación", Toast.LENGTH_LONG).show();
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -151,8 +169,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
-        ambientLightManager = new AmbientLightManager(this);
 
+        ambientLightManager = new AmbientLightManager(this);
         //PreferenceManager.setDefaultValues(this, R.xml.preferenc, false);
     }
 
@@ -179,6 +197,15 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     @Override
     protected void onResume() {
 
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            //sensor = 0;
+            setSensor_orientacion(0);
+        }else{
+            //sensor = 1;
+            setSensor_orientacion(1);
+        }
+
+
         Log.i("CaptureActivity --- ", "onResume()");
 
         super.onResume();
@@ -194,6 +221,17 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         cameraManager = new CameraManager(getApplication());
 
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            //sensor = 0;
+            setSensor_orientacion(0);
+            //viewfinderView.setSensor1(getSensor_orientacion());
+        }else{
+            //sensor = 1;
+            setSensor_orientacion(1);
+        }
+
+
         viewfinderView.setCameraManager(cameraManager);
 
         resultView = findViewById(R.id.result_view);
@@ -1063,7 +1101,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             if (handler == null) {
 
                 Log.i("CaptureActivity --- ", "()");
-
+                /****************************************/
+                // Inicio del escaneo
+                /****************************************/
                 handler = new CaptureActivityHandler(this, decodeFormats, decodeHints, characterSet, cameraManager);
             }
             decodeOrStoreSavedBitmap(null, null);
