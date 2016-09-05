@@ -60,6 +60,7 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
     boolean val2 = false;
     boolean val3 = false;
     boolean val4 = false;
+    boolean val_inventario_diario = false;
 
     String str_id = "";
     String str_division = "";
@@ -133,19 +134,26 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
             Intent i = new Intent(v.getContext(), Activity_AddData.class);
             startActivity(i);
         }
-        if (v.getId() == R.id.btn_InventarioDiario){
-            Intent i = new Intent(v.getContext(), Activity_Inventario_Diario.class);
-            startActivity(i);
+        if (v.getId() == R.id.btn_InventarioDiario) {
+            if (prepararLista()) {
+                Intent i = new Intent(v.getContext(), Activity_Inventario_Diario.class);
+                startActivity(i);
+            } else {
+                Toast.makeText(getApplicationContext(), "El catálogo de almacenes está vacío", Toast.LENGTH_SHORT).show();
+            }
         }
         if (v.getId() == R.id.btn_Sincronizacion){
             Intent i = new Intent(v.getContext(), Actividad_Lista_Inventarios.class);
             startActivity(i);
         }
-        if (v.getId() == R.id.btn_ConsultaInventarioDiario){
-            Intent i = new Intent(v.getContext(), Activity_Consulta_Inventario_Diario.class);
-            startActivity(i);
+        if (v.getId() == R.id.btn_ConsultaInventarioDiario) {
+            if (prepararLista()) {
+                Intent i = new Intent(v.getContext(), Activity_Consulta_Inventario_Diario.class);
+                startActivity(i);
+            } else {
+                Toast.makeText(getApplicationContext(), "El catálogo de almacenes está vacío", Toast.LENGTH_SHORT).show();
+            }
         }
-
     }
 
 
@@ -165,13 +173,21 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
         }
 
         if (id == R.id.nav_InventarioDiario) {
-            Intent i = new Intent(Activity_Home.this,Activity_Inventario_Diario.class);
-            startActivity(i);
+            if (prepararLista()) {
+                Intent i = new Intent(Activity_Home.this,Activity_Inventario_Diario.class);
+                startActivity(i);
+            } else {
+                Toast.makeText(getApplicationContext(), "El catálogo de almacenes está vacío", Toast.LENGTH_SHORT).show();
+            }
         }
 
         if (id == R.id.nav_ConsultaInventarioDiario) {
-            Intent i = new Intent(Activity_Home.this,Activity_Consulta_Inventario_Diario.class);
-            startActivity(i);
+            if (prepararLista()) {
+                Intent i = new Intent(Activity_Home.this, Activity_Consulta_Inventario_Diario.class);
+                startActivity(i);
+            } else {
+                Toast.makeText(getApplicationContext(), "El catálogo de almacenes está vacío", Toast.LENGTH_SHORT).show();
+            }
         }
 
         if (id == R.id.nav_Sincronizar) {
@@ -207,6 +223,17 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private boolean prepararLista() {
+        final SQLiteDatabase db = baseDatos.getWritableDatabase();
+        final Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO, null);
+        if (c.getCount() > 0) {
+            val_inventario_diario = true;
+        } else {
+            val_inventario_diario = false;
+        }
+        return val_inventario_diario;
     }
 
     private void mtd_salir_sesion() {
@@ -700,4 +727,5 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
 
         //equipoAlmacenId
     }
+
 }

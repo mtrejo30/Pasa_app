@@ -95,6 +95,7 @@ public class Activity_AddData extends AppCompatActivity
     boolean val2 = false;
     boolean val3 = false;
     boolean val4 = false;
+    boolean val_inventario_diario = false;
 
     String str_id = "";
     String str_division = "";
@@ -508,13 +509,21 @@ public class Activity_AddData extends AppCompatActivity
         }
 
         if (id == R.id.nav_InventarioDiario) {
-            Intent i = new Intent(Activity_AddData.this,Activity_Inventario_Diario.class);
-            startActivity(i);
+            if(prepararListaID()) {
+                Intent i = new Intent(Activity_AddData.this, Activity_Inventario_Diario.class);
+                startActivity(i);
+            } else {
+                Toast.makeText(getApplicationContext(), "El catálogo de almacenes está vacío", Toast.LENGTH_SHORT).show();
+            }
         }
 
         if (id == R.id.nav_ConsultaInventarioDiario) {
-            Intent i = new Intent(Activity_AddData.this,Activity_Consulta_Inventario_Diario.class);
-            startActivity(i);
+            if (prepararListaID()) {
+                Intent i = new Intent(Activity_AddData.this, Activity_Consulta_Inventario_Diario.class);
+                startActivity(i);
+            } else {
+                Toast.makeText(getApplicationContext(), "El catálogo de almacenes está vacío", Toast.LENGTH_SHORT).show();
+            }
         }
 
         if (id == R.id.nav_Sincronizar) {
@@ -538,6 +547,18 @@ public class Activity_AddData extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private boolean prepararListaID() {
+        final SQLiteDatabase db = baseDatos.getWritableDatabase();
+        final Cursor c = db.rawQuery("Select * from " + HelperInventarios.Tablas.TBL_INVENTARIO_DIARIO, null);
+        if (c.getCount() > 0) {
+            val_inventario_diario = true;
+        } else {
+            val_inventario_diario = false;
+        }
+        return val_inventario_diario;
+    }
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
