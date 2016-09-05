@@ -77,30 +77,26 @@ public class Activity_Login extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         SharedPreferences prefs = getSharedPreferences("sesion", Context.MODE_PRIVATE);
         _variables.usuario  = prefs.getString("user", "");
         _variables.pass = prefs.getString("pass", "");
-        if (prefs.getString("user","").length()>0)
+        /* Validar sesión guardada */
+        if (prefs.getString("user","").length() > 0)
         {
             Toast.makeText(getApplicationContext(), "Bienvenido a tu sesión guardado", Toast.LENGTH_LONG).show();
             Intent i = new Intent(Activity_Login.this,Activity_Home.class);
             startActivity(i);
-            //finish();
+            // finish();
         }else {
-            //Toast.makeText(getApplicationContext(), "No existe ninguna sesión guardada", Toast.LENGTH_LONG).show();
+            // Toast.makeText(getApplicationContext(), "No existe ninguna sesión guardada", Toast.LENGTH_LONG).show();
         }
-
         setContentView(R.layout.activity__login);
         obtenerInstancia(getApplicationContext());
-
         Button btn_Access = (Button) findViewById(R.id.btnAceptar);
         btn_Access.setOnClickListener(this);
         chrecuerdame=(CheckBox) findViewById(R.id.checkBox);
         txt_User = (EditText) findViewById(R.id.idtUsuario);
         txt_Pass = (EditText) findViewById(R.id.editText);
-
-
 
         chrecuerdame.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -125,21 +121,19 @@ public class Activity_Login extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
+        /* Operaciones de logueo */
         if(v.getId() == R.id.btnAceptar){
-
             if(!txt_User.getText().toString().equals("") & !txt_Pass.getText().toString().equals("")) {
-
                 /*  Inicio validacion del internet    */
                 if(!estaConectado()) {
                 }
                 else {
-
+                    /* Inicia descarga de datos en la clase TareaWSListarUser */
                     SharedPreferences prefs= getSharedPreferences("sesion",Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("user", txt_User.getText().toString());
                     editor.putString("pass", txt_Pass.getText().toString());
                     editor.commit();
-
                     TareaWSListarUser tarea = new TareaWSListarUser();
                     tarea.execute();
                 }
@@ -175,12 +169,12 @@ public class Activity_Login extends AppCompatActivity
     }
 
     //Tarea Asíncrona para llamar al WS de listado en segundo plano
+    /* Validación del logueo */
     private class TareaWSListarUser extends AsyncTask<String,Integer,Boolean> {
         String a = txt_User.getText().toString();
         String b = txt_Pass.getText().toString();
 
         protected void onPreExecute() {
-
             /*  Inicio validacion del internet    */
             pDialog = new ProgressDialog(Activity_Login.this);
             pDialog.setMessage("Autentificando...");
@@ -193,7 +187,7 @@ public class Activity_Login extends AppCompatActivity
         protected Boolean doInBackground(String... params) {
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpGet del =
-                    new HttpGet("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/loginUser?user="+a+"&pass="+b+"&app=1");
+                    new HttpGet("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/loginUser?user="+a+"&pass="+b+"&app=3");
             del.addHeader(BasicScheme.authenticate( new UsernamePasswordCredentials("adminLogistica", "Pasa123!"), "UTF-8", false));
             del.setHeader("content-type", "application/json");
             try
@@ -271,6 +265,7 @@ public class Activity_Login extends AppCompatActivity
         protected void onPostExecute(Boolean result) {
             if (result) {
                 if (Integer.parseInt(clientes_res[0][2]) == 1){
+                    /* Si la descarga es correcta pasa a la descarga de CatalogoAlmacenes */
                     TareaWSListarCatalogosAlmacenes tarea2 = new TareaWSListarCatalogosAlmacenes();
                     tarea2.execute();
                 }
@@ -371,13 +366,21 @@ public class Activity_Login extends AppCompatActivity
         }
 
         protected void onPostExecute(Boolean result) {
-            if (result)            {
-                if (Integer.parseInt(clientes_res[0][2]) == 1){
-                    TareaWSListarTipoEquipo tarea3 = new TareaWSListarTipoEquipo();
-                    tarea3.execute();
 
-                }
-                else {
+            TareaWSListarTipoEquipo tarea3 = new TareaWSListarTipoEquipo();
+            tarea3.execute();
+            //if (result) {
+                //if (Integer.parseInt(clientes_res[0][2]) == 1){
+                    //TareaWSListarTipoEquipo tarea3 = new TareaWSListarTipoEquipo();
+                    //tarea3.execute();
+
+                //}
+                //else {
+                    /* Valida entrar a la app aunque no haya datos de descarga de catalogo almacenes */
+                    //TareaWSListarTipoEquipo tarea3 = new TareaWSListarTipoEquipo();
+                    //tarea3.execute();
+                    /* Primera validación de la aplicación - Si no hay datos en la descarga de Catalogo Almacenes no deja entrar a la app */
+                    /*
                     SharedPreferences preferences = getSharedPreferences("sesion", 0);
                     preferences.edit().remove("user").commit();
                     preferences.edit().remove("pass").commit();
@@ -385,8 +388,9 @@ public class Activity_Login extends AppCompatActivity
                     Toast.makeText(getApplicationContext(),
                             "Error al descargar datos del Almacén", Toast.LENGTH_LONG).show();
                     txt_User.requestFocus();
-                }
-            }
+                    */
+                //}
+            /*}
             else {
                 SharedPreferences preferences = getSharedPreferences("sesion", 0);
                 preferences.edit().remove("user").commit();
@@ -396,6 +400,7 @@ public class Activity_Login extends AppCompatActivity
                         "Error al descargar datos del Almacén", Toast.LENGTH_LONG).show();
                 txt_User.requestFocus();
             }
+            */
         }
     }
 
@@ -409,7 +414,7 @@ public class Activity_Login extends AppCompatActivity
                     new HttpGet("http://pruebas-servicios.pasa.mx:89/ApisPromotoraAmbiental/api/Inventario/getCatalogoTipoEquipo");
             del.addHeader(BasicScheme.authenticate( new UsernamePasswordCredentials("adminLogistica", "Pasa123!"), "UTF-8", false));
             del.setHeader("content-type", "application/json");
-            Log.i("Aquiiiiiii", " ======================================>> " + (almacenes_res[0][0]));
+            //Log.i("Aquiiiiiii", " ======================================>> " + (almacenes_res[0][0]));
             try
             {
                 HttpResponse resp = httpClient.execute(del);

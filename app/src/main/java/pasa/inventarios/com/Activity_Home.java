@@ -411,8 +411,6 @@ public class Activity_Home extends AppCompatActivity implements View.OnClickList
     }
     /*  Fin validacion del internet    */
 
-
-
     private class TareaWSInsertarInventario extends AsyncTask<String, Integer, Boolean> {
         public int contador = 0;
 
